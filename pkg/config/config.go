@@ -451,6 +451,7 @@ type ProvidersConfig struct {
 	OpenRouter    ProviderConfig       `json:"openrouter"`
 	Groq          ProviderConfig       `json:"groq"`
 	Zhipu         ProviderConfig       `json:"zhipu"`
+	Bailian       ProviderConfig       `json:"bailian"`
 	VLLM          ProviderConfig       `json:"vllm"`
 	Gemini        ProviderConfig       `json:"gemini"`
 	Nvidia        ProviderConfig       `json:"nvidia"`
