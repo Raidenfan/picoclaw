@@ -88,6 +88,16 @@ type WeComMarkdownMessage struct {
 	} `json:"markdown"`
 }
 
+// WeComFileMessage represents file message for sending
+type WeComFileMessage struct {
+	ToUser  string `json:"touser"`
+	MsgType string `json:"msgtype"`
+	AgentID int64  `json:"agentid"`
+	File    struct {
+		MediaID string `json:"media_id"`
+	} `json:"file"`
+}
+
 // WeComImageMessage represents image message for sending
 type WeComImageMessage struct {
 	ToUser  string `json:"touser"`
@@ -267,8 +277,11 @@ func (c *WeComAppChannel) SendMedia(ctx context.Context, msg bus.OutboundMediaMe
 		// Send media message using the media_id
 		if mediaType == "image" {
 			err = c.sendImageMessage(ctx, accessToken, msg.ChatID, mediaID)
+		} else if mediaType == "file" {
+			// For file type, send as file message
+			err = c.sendFileMessage(ctx, accessToken, msg.ChatID, mediaID)
 		} else {
-			// For non-image types, send as text fallback with caption
+			// For non-image/file types (audio, video), send as text fallback with caption
 			caption := part.Caption
 			if caption == "" {
 				caption = fmt.Sprintf("[%s: %s]", part.Type, part.Filename)
@@ -419,6 +432,17 @@ func (c *WeComAppChannel) sendImageMessage(ctx context.Context, accessToken, use
 		AgentID: c.config.AgentID,
 	}
 	msg.Image.MediaID = mediaID
+	return c.sendWeComMessage(ctx, accessToken, msg)
+}
+
+// sendFileMessage sends a file message using a media_id.
+func (c *WeComAppChannel) sendFileMessage(ctx context.Context, accessToken, userID, mediaID string) error {
+	msg := WeComFileMessage{
+		ToUser:  userID,
+		MsgType: "file",
+		AgentID: c.config.AgentID,
+	}
+	msg.File.MediaID = mediaID
 	return c.sendWeComMessage(ctx, accessToken, msg)
 }
 
