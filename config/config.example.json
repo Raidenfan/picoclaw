@@ -8,7 +8,11 @@
       "temperature": 0.7,
       "max_tool_iterations": 20,
       "summarize_message_threshold": 20,
-      "summarize_token_percent": 75
+      "summarize_token_percent": 75,
+      "tool_feedback": {
+        "enabled": false,
+        "max_args_length": 300
+      }
     }
   },
   "model_list": [
@@ -26,6 +30,13 @@
       "thinking_level": "high"
     },
     {
+      "_comment": "Anthropic Messages API - use native format for direct Anthropic API access",
+      "model_name": "claude-opus-4-6",
+      "model": "anthropic-messages/claude-opus-4-6",
+      "api_key": "sk-ant-your-key",
+      "api_base": "https://api.anthropic.com"
+    },
+    {
       "model_name": "gemini",
       "model": "antigravity/gemini-2.0-flash",
       "auth_method": "oauth"
@@ -39,6 +50,18 @@
       "model_name": "longcat",
       "model": "longcat/LongCat-Flash-Thinking",
       "api_key": "your-longcat-api-key"
+    },
+    {
+      "model_name": "modelscope-qwen",
+      "model": "modelscope/Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "api_key": "your-modelscope-access-token",
+      "api_base": "https://api-inference.modelscope.cn/v1"
+    },
+    {
+      "model_name": "azure-gpt5",
+      "model": "azure/my-gpt5-deployment",
+      "api_key": "your-azure-api-key",
+      "api_base": "https://your-resource.openai.azure.com"
     },
     {
       "model_name": "loadbalanced-gpt-5.4",
@@ -59,9 +82,8 @@
       "token": "YOUR_TELEGRAM_BOT_TOKEN",
       "base_url": "",
       "proxy": "",
-      "allow_from": [
-        "YOUR_USER_ID"
-      ],
+      "allow_from": ["YOUR_USER_ID"],
+      "use_markdown_v2": false,
       "reasoning_channel_id": ""
     },
     "discord": {
@@ -104,7 +126,8 @@
       "verification_token": "",
       "allow_from": [],
       "reasoning_channel_id": "",
-      "random_reaction_emoji": []
+      "random_reaction_emoji": [],
+      "is_lark": false
     },
     "dingtalk": {
       "enabled": false,
@@ -181,6 +204,8 @@
     "wecom_aibot": {
       "_comment": "WeCom AI Bot (智能机器人) - Official WeCom AI Bot integration, supports proactive messaging and private chats.",
       "enabled": false,
+      "bot_id": "YOUR_BOT_ID",
+      "secret": "YOUR_SECRET",
       "token": "YOUR_TOKEN",
       "encoding_aes_key": "YOUR_43_CHAR_ENCODING_AES_KEY",
       "webhook_path": "/webhook/wecom-aibot",
@@ -283,6 +308,10 @@
     "longcat": {
       "api_key": "",
       "api_base": "https://api.longcat.chat/openai"
+    },
+    "modelscope": {
+      "api_key": "",
+      "api_base": "https://api-inference.modelscope.cn/v1"
     }
   },
   "tools": {
@@ -290,6 +319,9 @@
     "allow_write_paths": null,
     "web": {
       "enabled": true,
+      "prefer_native": true,
+      "fetch_limit_bytes": 10485760,
+      "format": "plaintext",
       "brave": {
         "enabled": false,
         "api_key": "YOUR_BRAVE_API_KEY",
@@ -328,7 +360,8 @@
         "search_engine": "search_std",
         "max_results": 5
       },
-      "fetch_limit_bytes": 10485760
+      "fetch_limit_bytes": 10485760,
+      "private_host_whitelist": []
     },
     "cron": {
       "enabled": true,
@@ -427,6 +460,10 @@
           "max_response_size": 0
         }
       },
+      "github": {
+        "proxy": "http://127.0.0.1:7891",
+        "token": ""
+      },
       "max_concurrent_searches": 2,
       "search_cache": {
         "max_size": 50,
@@ -491,6 +528,7 @@
   },
   "gateway": {
     "host": "127.0.0.1",
-    "port": 18790
+    "port": 18790,
+    "hot_reload": false
   }
 }

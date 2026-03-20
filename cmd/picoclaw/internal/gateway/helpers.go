@@ -7,7 +7,10 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"sync"
 	"time"
+
+	"golang.org/x/sys/unix"
 
 	"github.com/sipeed/picoclaw/cmd/picoclaw/internal"
 	"github.com/sipeed/picoclaw/pkg/agent"
@@ -19,7 +22,6 @@ import (
 	_ "github.com/sipeed/picoclaw/pkg/channels/irc"
 	_ "github.com/sipeed/picoclaw/pkg/channels/line"
 	_ "github.com/sipeed/picoclaw/pkg/channels/maixcam"
-	_ "github.com/sipeed/picoclaw/pkg/channels/matrix"
 	_ "github.com/sipeed/picoclaw/pkg/channels/onebot"
 	_ "github.com/sipeed/picoclaw/pkg/channels/pico"
 	_ "github.com/sipeed/picoclaw/pkg/channels/qq"
@@ -40,6 +42,60 @@ import (
 	"github.com/sipeed/picoclaw/pkg/tools"
 	"github.com/sipeed/picoclaw/pkg/voice"
 )
+
+const fifoPath = "/tmp/picoclaw_animation"
+
+// 动画控制变量
+var (
+	animationTimer *time.Timer
+	timerMu        sync.Mutex
+)
+
+// 向 FIFO 写入动画控制信号
+func writeAnimationSignal(active bool) {
+	fd, err := unix.Open(fifoPath, unix.O_WRONLY|unix.O_NONBLOCK, 0666)
+	if err != nil {
+		// FIFO 可能还没创建，忽略错误
+		return
+	}
+	defer unix.Close(fd)
+	
+	signal := "0"
+	if active {
+		signal = "1"
+	}
+	
+	_, err = unix.Write(fd, []byte(signal+"\n"))
+	if err != nil {
+		// 写入失败也忽略，可能是播放器还没启动
+		return
+	}
+}
+
+// 激活动画（取消关闭定时器）
+func activateAnimation() {
+	timerMu.Lock()
+	defer timerMu.Unlock()
+	
+	if animationTimer != nil {
+		animationTimer.Stop()
+	}
+	writeAnimationSignal(true)
+}
+
+// 计划在 N 秒后关闭动画
+func scheduleAnimationStop(delay time.Duration) {
+	timerMu.Lock()
+	defer timerMu.Unlock()
+	
+	if animationTimer != nil {
+		animationTimer.Stop()
+	}
+	
+	animationTimer = time.AfterFunc(delay, func() {
+		writeAnimationSignal(false)
+	})
+}
 
 func gatewayCmd(debug bool) error {
 	if debug {
@@ -152,6 +208,10 @@ func gatewayCmd(debug bool) error {
 
 	fmt.Printf("✓ Gateway started on %s:%d\n", cfg.Gateway.Host, cfg.Gateway.Port)
 	fmt.Println("Press Ctrl+C to stop")
+	
+	// 通知 gif_player 启动动画（首次启动时亮屏）
+	activateAnimation()
+	fmt.Println("✓ Animation signal sent")
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -203,6 +263,14 @@ func gatewayCmd(debug bool) error {
 	cancel()
 	msgBus.Close()
 
+	// 停止动画并清理定时器
+	timerMu.Lock()
+	if animationTimer != nil {
+		animationTimer.Stop()
+	}
+	timerMu.Unlock()
+	writeAnimationSignal(false)
+
 	// Use a fresh context with timeout for graceful shutdown,
 	// since the original ctx is already canceled.
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 15*time.Second)
@@ -214,7 +282,7 @@ func gatewayCmd(debug bool) error {
 	cronService.Stop()
 	mediaStore.Stop()
 	agentLoop.Stop()
-	agentLoop.Close()
+	
 	fmt.Println("✓ Gateway stopped")
 
 	return nil
