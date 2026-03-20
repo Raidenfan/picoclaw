@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -18,6 +19,8 @@ import (
 	"sync/atomic"
 	"time"
 	"unicode/utf8"
+
+	"golang.org/x/sys/unix"
 
 	"github.com/sipeed/picoclaw/pkg/bus"
 	"github.com/sipeed/picoclaw/pkg/channels"
@@ -72,6 +75,55 @@ const (
 	metadataKeyParentPeerKind = "parent_peer_kind"
 	metadataKeyParentPeerID   = "parent_peer_id"
 )
+
+// 动画控制 FIFO 路径
+const animationFifoPath = "/tmp/picoclaw_animation"
+
+// 动画控制变量
+var (
+	animationTimer *time.Timer
+	timerMu        sync.Mutex
+)
+
+// 向 FIFO 写入动画控制信号
+func writeAnimationSignal(active bool) {
+	fd, err := unix.Open(animationFifoPath, unix.O_WRONLY|unix.O_NONBLOCK, 0666)
+	if err != nil {
+		// FIFO 可能还没创建，忽略错误
+		return
+	}
+	defer unix.Close(fd)
+	
+	signal := "0"
+	if active {
+		signal = "1"
+	}
+	
+	_, err = unix.Write(fd, []byte(signal+"\n"))
+	if err != nil {
+		// 写入失败也忽略，可能是播放器还没启动
+		return
+	}
+}
+
+// 激活动画（亮屏）并重置关闭定时器
+func activateAnimation() {
+	timerMu.Lock()
+	defer timerMu.Unlock()
+	
+	// 取消之前的关闭定时器
+	if animationTimer != nil {
+		animationTimer.Stop()
+	}
+	
+	// 亮屏
+	writeAnimationSignal(true)
+	
+	// 计划在 30 秒后自动关闭（如果期间没有新消息）
+	animationTimer = time.AfterFunc(30*time.Second, func() {
+		writeAnimationSignal(false)
+	})
+}
 
 func NewAgentLoop(
 	cfg *config.Config,
@@ -726,6 +778,22 @@ func (al *AgentLoop) runAgentLoop(
 	agent *AgentInstance,
 	opts processOptions,
 ) (string, error) {
+	// 激活动画（亮屏）- 每次处理消息时调用
+	activateAnimation()
+	
+	// Create activity marker file at start of processing
+	markerFile := "/tmp/picoclaw_active"
+	if createErr := os.WriteFile(markerFile, []byte("active"), 0644); createErr != nil {
+		logger.WarnCF("agent", "Failed to create activity marker", map[string]any{"error": createErr.Error()})
+	}
+	// Ensure marker is removed when processing completes
+	defer func() {
+		if removeErr := os.Remove(markerFile); removeErr != nil {
+			logger.WarnCF("agent", "Failed to remove activity marker", map[string]any{"error": removeErr.Error()})
+		}
+		// 消息处理完成后关闭屏幕
+		writeAnimationSignal(false)
+	}()
 	// 0. Record last channel for heartbeat notifications (skip internal channels and cli)
 	if opts.Channel != "" && opts.ChatID != "" {
 		if !constants.IsInternalChannel(opts.Channel) {
