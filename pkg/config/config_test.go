@@ -1194,27 +1194,6 @@ func TestConfigLogLevelEmpty(t *testing.T) {
 	}
 }
 
-func TestDefaultConfig_MinimaxExtraBody(t *testing.T) {
-	cfg := DefaultConfig()
-
-	var minimaxCfg *ModelConfig
-	for i := range cfg.ModelList {
-		if cfg.ModelList[i].Model == "minimax/MiniMax-M2.5" {
-			minimaxCfg = &cfg.ModelList[i]
-			break
-		}
-	}
-	if minimaxCfg == nil {
-		t.Fatal("Minimax model not found in ModelList")
-	}
-	if minimaxCfg.ExtraBody == nil {
-		t.Fatal("Minimax ExtraBody should not be nil")
-	}
-	if got, ok := minimaxCfg.ExtraBody["reasoning_split"]; !ok || got != true {
-		t.Fatalf("Minimax ExtraBody[reasoning_split] = %v, want true", got)
-	}
-}
-
 func TestModelConfig_ExtraBodyRoundTrip(t *testing.T) {
 	dir := t.TempDir()
 	cfgPath := filepath.Join(dir, "config.json")

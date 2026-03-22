@@ -117,7 +117,7 @@ func CreateProviderFromConfig(cfg *config.ModelConfig) (LLMProvider, string, err
 	case "litellm", "openrouter", "groq", "zhipu", "gemini", "nvidia",
 		"ollama", "moonshot", "shengsuanyun", "deepseek", "cerebras",
 		"vivgrid", "volcengine", "vllm", "qwen", "qwen-intl", "qwen-international", "dashscope-intl",
-		"qwen-us", "dashscope-us", "mistral", "avian", "minimax", "longcat", "modelscope", "novita",
+		"qwen-us", "dashscope-us", "mistral", "avian", "longcat", "modelscope", "novita",
 		"coding-plan", "alibaba-coding", "qwen-coding":
 		// All other OpenAI-compatible HTTP providers
 		if cfg.APIKey() == "" && cfg.APIBase == "" {
@@ -134,6 +134,31 @@ func CreateProviderFromConfig(cfg *config.ModelConfig) (LLMProvider, string, err
 			cfg.MaxTokensField,
 			cfg.RequestTimeout,
 			cfg.ExtraBody,
+		), modelID, nil
+
+	case "minimax":
+		// Minimax requires reasoning_split: true in the request body
+		if cfg.APIKey == "" && cfg.APIBase == "" {
+			return nil, "", fmt.Errorf("api_key or api_base is required for HTTP-based protocol %q", protocol)
+		}
+		apiBase := cfg.APIBase
+		if apiBase == "" {
+			apiBase = getDefaultAPIBase(protocol)
+		}
+		extraBody := cfg.ExtraBody
+		if extraBody == nil {
+			extraBody = make(map[string]any)
+		}
+		if _, ok := extraBody["reasoning_split"]; !ok {
+			extraBody["reasoning_split"] = true
+		}
+		return NewHTTPProviderWithMaxTokensFieldAndRequestTimeout(
+			cfg.APIKey,
+			apiBase,
+			cfg.Proxy,
+			cfg.MaxTokensField,
+			cfg.RequestTimeout,
+			extraBody,
 		), modelID, nil
 
 	case "anthropic":
