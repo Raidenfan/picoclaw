@@ -55,6 +55,7 @@ type turnState struct {
 	turnID     string
 	agentID    string
 	sessionKey string
+	turnCtx    *TurnContext
 
 	channel     string
 	chatID      string
@@ -115,6 +116,7 @@ func newTurnState(agent *AgentInstance, opts processOptions, scope turnEventScop
 		turnID:      scope.turnID,
 		agentID:     agent.ID,
 		sessionKey:  opts.SessionKey,
+		turnCtx:     cloneTurnContext(scope.context),
 		channel:     opts.Channel,
 		chatID:      opts.ChatID,
 		userMessage: opts.UserMessage,
@@ -307,6 +309,7 @@ func (ts *turnState) eventMeta(source, tracePath string) EventMeta {
 		Iteration:  snap.Iteration,
 		Source:     source,
 		TracePath:  tracePath,
+		Context:    cloneTurnContext(ts.turnCtx),
 	}
 }
 

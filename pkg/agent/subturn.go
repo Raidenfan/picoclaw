@@ -366,10 +366,11 @@ func spawnSubTurn(
 		SendResponse:            false,
 		NoHistory:               true, // SubTurns don't use session history
 		SkipInitialSteeringPoll: true,
+		InboundContext:          cloneInboundContext(parentTS.opts.InboundContext),
 	}
 
 	// Create event scope for the child turn
-	scope := al.newTurnEventScope(agent.ID, childID)
+	scope := al.newTurnEventScope(agent.ID, childID, newTurnContext(opts.InboundContext))
 
 	// Create child turnState using the new API
 	childTS := newTurnState(&agent, opts, scope)

@@ -136,6 +136,12 @@ func TestAgentLoop_EmitsMinimalTurnEvents(t *testing.T) {
 		DefaultResponse: defaultResponse,
 		EnableSummary:   false,
 		SendResponse:    false,
+		InboundContext: &bus.InboundContext{
+			Channel:  "cli",
+			ChatID:   "direct",
+			ChatType: "direct",
+			SenderID: "tester",
+		},
 	})
 	if err != nil {
 		t.Fatalf("runAgentLoop failed: %v", err)
@@ -175,6 +181,12 @@ func TestAgentLoop_EmitsMinimalTurnEvents(t *testing.T) {
 		}
 		if evt.Meta.SessionKey != "session-1" {
 			t.Fatalf("event %d has session key %q, want session-1", i, evt.Meta.SessionKey)
+		}
+		if evt.Meta.Context == nil || evt.Meta.Context.Inbound == nil {
+			t.Fatalf("event %d missing inbound turn context", i)
+		}
+		if evt.Meta.Context.Inbound.Channel != "cli" || evt.Meta.Context.Inbound.SenderID != "tester" {
+			t.Fatalf("event %d inbound context = %+v", i, evt.Meta.Context.Inbound)
 		}
 	}
 
@@ -472,7 +484,7 @@ func TestAgentLoop_EmitsSessionSummarizeEvent(t *testing.T) {
 	sub := al.SubscribeEvents(16)
 	defer al.UnsubscribeEvents(sub.ID)
 
-	turnScope := al.newTurnEventScope(defaultAgent.ID, "session-1")
+	turnScope := al.newTurnEventScope(defaultAgent.ID, "session-1", nil)
 	al.summarizeSession(defaultAgent, "session-1", turnScope)
 
 	events := collectEventStream(sub.C)

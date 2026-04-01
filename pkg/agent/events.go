@@ -98,6 +98,7 @@ type EventMeta struct {
 	Iteration    int
 	TracePath    string
 	Source       string
+	Context      *TurnContext `json:"context,omitempty"`
 }
 
 // TurnEndStatus describes the terminal state of a turn.

@@ -103,6 +103,7 @@ func (r *LLMHookRequest) Clone() *LLMHookRequest {
 		return nil
 	}
 	cloned := *r
+	cloned.Meta = cloneEventMeta(r.Meta)
 	cloned.Messages = cloneProviderMessages(r.Messages)
 	cloned.Tools = cloneToolDefinitions(r.Tools)
 	cloned.Options = cloneStringAnyMap(r.Options)
@@ -122,6 +123,7 @@ func (r *LLMHookResponse) Clone() *LLMHookResponse {
 		return nil
 	}
 	cloned := *r
+	cloned.Meta = cloneEventMeta(r.Meta)
 	cloned.Response = cloneLLMResponse(r.Response)
 	return &cloned
 }
@@ -139,6 +141,7 @@ func (r *ToolCallHookRequest) Clone() *ToolCallHookRequest {
 		return nil
 	}
 	cloned := *r
+	cloned.Meta = cloneEventMeta(r.Meta)
 	cloned.Arguments = cloneStringAnyMap(r.Arguments)
 	return &cloned
 }
@@ -156,6 +159,7 @@ func (r *ToolApprovalRequest) Clone() *ToolApprovalRequest {
 		return nil
 	}
 	cloned := *r
+	cloned.Meta = cloneEventMeta(r.Meta)
 	cloned.Arguments = cloneStringAnyMap(r.Arguments)
 	return &cloned
 }
@@ -175,6 +179,7 @@ func (r *ToolResultHookResponse) Clone() *ToolResultHookResponse {
 		return nil
 	}
 	cloned := *r
+	cloned.Meta = cloneEventMeta(r.Meta)
 	cloned.Arguments = cloneStringAnyMap(r.Arguments)
 	cloned.Result = cloneToolResult(r.Result)
 	return &cloned

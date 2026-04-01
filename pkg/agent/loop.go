@@ -91,6 +91,7 @@ type processOptions struct {
 	SuppressToolFeedback    bool                // Whether to suppress inline tool feedback messages
 	NoHistory               bool                // If true, don't load session history (for heartbeat)
 	SkipInitialSteeringPoll bool                // If true, skip the steering poll at loop start (used by Continue)
+	InboundContext          *bus.InboundContext // Normalized inbound facts for events/hooks
 }
 
 type continuationTarget struct {
@@ -750,14 +751,16 @@ type turnEventScope struct {
 	agentID    string
 	sessionKey string
 	turnID     string
+	context    *TurnContext
 }
 
-func (al *AgentLoop) newTurnEventScope(agentID, sessionKey string) turnEventScope {
+func (al *AgentLoop) newTurnEventScope(agentID, sessionKey string, turnCtx *TurnContext) turnEventScope {
 	seq := al.turnSeq.Add(1)
 	return turnEventScope{
 		agentID:    agentID,
 		sessionKey: sessionKey,
 		turnID:     fmt.Sprintf("%s-turn-%d", agentID, seq),
+		context:    cloneTurnContext(turnCtx),
 	}
 }
 
@@ -769,13 +772,14 @@ func (ts turnEventScope) meta(iteration int, source, tracePath string) EventMeta
 		Iteration:  iteration,
 		Source:     source,
 		TracePath:  tracePath,
+		Context:    cloneTurnContext(ts.context),
 	}
 }
 
 func (al *AgentLoop) emitEvent(kind EventKind, meta EventMeta, payload any) {
 	evt := Event{
 		Kind:    kind,
-		Meta:    meta,
+		Meta:    cloneEventMeta(meta),
 		Payload: payload,
 	}
 
@@ -1356,6 +1360,7 @@ func (al *AgentLoop) processMessage(ctx context.Context, msg bus.InboundMessage)
 		DefaultResponse:   defaultResponse,
 		EnableSummary:     true,
 		SendResponse:      false,
+		InboundContext:    cloneInboundContext(&msg.Context),
 	}
 
 	// context-dependent commands check their own Runtime fields and report
@@ -1535,7 +1540,8 @@ func (al *AgentLoop) runAgentLoop(
 		}
 	}
 
-	ts := newTurnState(agent, opts, al.newTurnEventScope(agent.ID, opts.SessionKey))
+	turnScope := al.newTurnEventScope(agent.ID, opts.SessionKey, newTurnContext(opts.InboundContext))
+	ts := newTurnState(agent, opts, turnScope)
 	result, err := al.runTurn(ctx, ts)
 	if err != nil {
 		return "", err

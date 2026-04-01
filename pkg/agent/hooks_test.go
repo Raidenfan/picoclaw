@@ -106,7 +106,8 @@ func (p *llmHookTestProvider) GetDefaultModel() string {
 }
 
 type llmObserverHook struct {
-	eventCh chan Event
+	eventCh     chan Event
+	lastInbound *bus.InboundContext
 }
 
 func (h *llmObserverHook) OnEvent(ctx context.Context, evt Event) error {
@@ -123,6 +124,9 @@ func (h *llmObserverHook) BeforeLLM(
 	ctx context.Context,
 	req *LLMHookRequest,
 ) (*LLMHookRequest, HookDecision, error) {
+	if req.Meta.Context != nil {
+		h.lastInbound = cloneInboundContext(req.Meta.Context.Inbound)
+	}
 	next := req.Clone()
 	next.Model = "hook-model"
 	return next, HookDecision{Action: HookActionModify}, nil
@@ -155,6 +159,12 @@ func TestAgentLoop_Hooks_ObserverAndLLMInterceptor(t *testing.T) {
 		DefaultResponse: defaultResponse,
 		EnableSummary:   false,
 		SendResponse:    false,
+		InboundContext: &bus.InboundContext{
+			Channel:  "cli",
+			ChatID:   "direct",
+			ChatType: "direct",
+			SenderID: "hook-user",
+		},
 	})
 	if err != nil {
 		t.Fatalf("runAgentLoop failed: %v", err)
@@ -169,11 +179,20 @@ func TestAgentLoop_Hooks_ObserverAndLLMInterceptor(t *testing.T) {
 	if lastModel != "hook-model" {
 		t.Fatalf("expected model hook-model, got %q", lastModel)
 	}
+	if hook.lastInbound == nil {
+		t.Fatal("expected hook to receive inbound context")
+	}
+	if hook.lastInbound.Channel != "cli" || hook.lastInbound.SenderID != "hook-user" {
+		t.Fatalf("hook inbound context = %+v", hook.lastInbound)
+	}
 
 	select {
 	case evt := <-hook.eventCh:
 		if evt.Kind != EventKindTurnEnd {
 			t.Fatalf("expected turn end event, got %v", evt.Kind)
+		}
+		if evt.Meta.Context == nil || evt.Meta.Context.Inbound == nil {
+			t.Fatal("expected observer event to carry inbound context")
 		}
 	case <-time.After(2 * time.Second):
 		t.Fatal("timed out waiting for hook observer event")
