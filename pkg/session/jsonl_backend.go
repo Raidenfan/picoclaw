@@ -84,6 +84,13 @@ func (b *JSONLBackend) EnsureSessionMetadata(sessionKey string, scope *SessionSc
 		return
 	}
 
+	canonicalMeta, metaErr := metaStore.GetSessionMeta(ctx, sessionKey)
+	if metaErr != nil {
+		log.Printf("session: get canonical session metadata: %v", metaErr)
+	} else if canonicalMeta.Count > 0 || strings.TrimSpace(canonicalMeta.Summary) != "" {
+		return
+	}
+
 	canonicalHistory, historyErr := b.store.GetHistory(ctx, sessionKey)
 	if historyErr != nil {
 		log.Printf("session: get canonical history: %v", historyErr)

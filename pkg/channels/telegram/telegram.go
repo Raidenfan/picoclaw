@@ -176,7 +176,7 @@ func (c *TelegramChannel) Send(ctx context.Context, msg bus.OutboundMessage) ([]
 
 	useMarkdownV2 := c.config.Channels.Telegram.UseMarkdownV2
 
-	chatID, threadID, err := parseTelegramChatID(msg.ChatID)
+	chatID, threadID, err := resolveTelegramOutboundTarget(msg.ChatID, &msg.Context)
 	if err != nil {
 		return nil, fmt.Errorf("invalid chat ID %s: %w", msg.ChatID, channels.ErrSendFailed)
 	}
@@ -463,7 +463,7 @@ func (c *TelegramChannel) SendMedia(ctx context.Context, msg bus.OutboundMediaMe
 		return nil, channels.ErrNotRunning
 	}
 
-	chatID, threadID, err := parseTelegramChatID(msg.ChatID)
+	chatID, threadID, err := resolveTelegramOutboundTarget(msg.ChatID, &msg.Context)
 	if err != nil {
 		return nil, fmt.Errorf("invalid chat ID %s: %w", msg.ChatID, channels.ErrSendFailed)
 	}
@@ -958,6 +958,28 @@ func parseTelegramChatID(chatID string) (int64, int, error) {
 		return 0, 0, fmt.Errorf("invalid thread ID in chat ID %q: %w", chatID, err)
 	}
 	return cid, tid, nil
+}
+
+func resolveTelegramOutboundTarget(chatID string, outboundCtx *bus.InboundContext) (int64, int, error) {
+	targetChatID := strings.TrimSpace(chatID)
+	if targetChatID == "" && outboundCtx != nil {
+		targetChatID = strings.TrimSpace(outboundCtx.ChatID)
+	}
+	resolvedChatID, resolvedThreadID, err := parseTelegramChatID(targetChatID)
+	if err != nil {
+		return 0, 0, err
+	}
+	if resolvedThreadID != 0 || outboundCtx == nil {
+		return resolvedChatID, resolvedThreadID, nil
+	}
+	topicID := strings.TrimSpace(outboundCtx.TopicID)
+	if topicID == "" {
+		return resolvedChatID, resolvedThreadID, nil
+	}
+	if threadID, convErr := strconv.Atoi(topicID); convErr == nil {
+		return resolvedChatID, threadID, nil
+	}
+	return resolvedChatID, resolvedThreadID, nil
 }
 
 func logParseFailed(err error, useMarkdownV2 bool) {

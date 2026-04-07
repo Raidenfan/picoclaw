@@ -750,3 +750,82 @@ func TestHandleSessions_FiltersEmptyJSONLFiles(t *testing.T) {
 		t.Fatalf("detail status = %d, want %d, body=%s", detailRec.Code, http.StatusNotFound, detailRec.Body.String())
 	}
 }
+
+func TestHandleSessions_ListsLegacyJSONLWithoutMeta(t *testing.T) {
+	configPath, cleanup := setupOAuthTestEnv(t)
+	defer cleanup()
+
+	dir := sessionsTestDir(t, configPath)
+	sessionKey := legacyPicoSessionPrefix + "missing-meta"
+	base := filepath.Join(dir, sanitizeSessionKey(sessionKey))
+	line, err := json.Marshal(providers.Message{Role: "user", Content: "recover me"})
+	if err != nil {
+		t.Fatalf("Marshal(message) error = %v", err)
+	}
+	if err := os.WriteFile(base+".jsonl", append(line, '\n'), 0o644); err != nil {
+		t.Fatalf("WriteFile(jsonl) error = %v", err)
+	}
+
+	h := NewHandler(configPath)
+	mux := http.NewServeMux()
+	h.RegisterRoutes(mux)
+
+	listRec := httptest.NewRecorder()
+	listReq := httptest.NewRequest(http.MethodGet, "/api/sessions", nil)
+	mux.ServeHTTP(listRec, listReq)
+
+	if listRec.Code != http.StatusOK {
+		t.Fatalf("list status = %d, want %d, body=%s", listRec.Code, http.StatusOK, listRec.Body.String())
+	}
+
+	var items []sessionListItem
+	if err := json.Unmarshal(listRec.Body.Bytes(), &items); err != nil {
+		t.Fatalf("Unmarshal(list) error = %v", err)
+	}
+	if len(items) != 1 {
+		t.Fatalf("len(items) = %d, want 1", len(items))
+	}
+	if items[0].ID != "missing-meta" {
+		t.Fatalf("items[0].ID = %q, want %q", items[0].ID, "missing-meta")
+	}
+
+	detailRec := httptest.NewRecorder()
+	detailReq := httptest.NewRequest(http.MethodGet, "/api/sessions/missing-meta", nil)
+	mux.ServeHTTP(detailRec, detailReq)
+
+	if detailRec.Code != http.StatusOK {
+		t.Fatalf("detail status = %d, want %d, body=%s", detailRec.Code, http.StatusOK, detailRec.Body.String())
+	}
+}
+
+func TestHandleSessions_IgnoresMetaJSONInLegacyFallback(t *testing.T) {
+	configPath, cleanup := setupOAuthTestEnv(t)
+	defer cleanup()
+
+	dir := sessionsTestDir(t, configPath)
+	metaOnly := filepath.Join(dir, "agent_main_pico_direct_pico_meta-only.meta.json")
+	metaOnlyContent := []byte(`{"key":"agent:main:pico:direct:pico:meta-only","summary":"meta only"}`)
+	if err := os.WriteFile(metaOnly, metaOnlyContent, 0o644); err != nil {
+		t.Fatalf("WriteFile(meta) error = %v", err)
+	}
+
+	h := NewHandler(configPath)
+	mux := http.NewServeMux()
+	h.RegisterRoutes(mux)
+
+	listRec := httptest.NewRecorder()
+	listReq := httptest.NewRequest(http.MethodGet, "/api/sessions", nil)
+	mux.ServeHTTP(listRec, listReq)
+
+	if listRec.Code != http.StatusOK {
+		t.Fatalf("list status = %d, want %d, body=%s", listRec.Code, http.StatusOK, listRec.Body.String())
+	}
+
+	var items []sessionListItem
+	if err := json.Unmarshal(listRec.Body.Bytes(), &items); err != nil {
+		t.Fatalf("Unmarshal(list) error = %v", err)
+	}
+	if len(items) != 0 {
+		t.Fatalf("len(items) = %d, want 0", len(items))
+	}
+}

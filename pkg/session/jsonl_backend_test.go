@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/sipeed/picoclaw/pkg/bus"
 	"github.com/sipeed/picoclaw/pkg/memory"
 	"github.com/sipeed/picoclaw/pkg/providers"
+	"github.com/sipeed/picoclaw/pkg/routing"
 	"github.com/sipeed/picoclaw/pkg/session"
 )
 
@@ -237,5 +239,46 @@ func TestJSONLBackend_EnsureSessionMetadata_PromotesLegacyAliasHistory(t *testin
 	}
 	if summary := b.GetSummary(canonicalKey); summary != "legacy summary" {
 		t.Fatalf("promoted summary = %q, want %q", summary, "legacy summary")
+	}
+}
+
+func TestJSONLBackend_EnsureSessionMetadata_PromotesLegacyPicoDirectAliasHistory(t *testing.T) {
+	b := newBackend(t)
+
+	legacyKey := "agent:main:pico:direct:pico:session-123"
+	b.AddMessage(legacyKey, "user", "legacy pico history")
+
+	scope := &session.SessionScope{
+		Version:    session.ScopeVersionV1,
+		AgentID:    "main",
+		Channel:    "pico",
+		Account:    "default",
+		Dimensions: []string{"sender"},
+		Values: map[string]string{
+			"sender": "pico-user",
+		},
+	}
+	allocation := session.AllocateRouteSession(session.AllocationInput{
+		AgentID: "main",
+		Context: bus.InboundContext{
+			Channel:  "pico",
+			Account:  "default",
+			ChatID:   "pico:session-123",
+			ChatType: "direct",
+			SenderID: "pico-user",
+		},
+		SessionPolicy: routing.SessionPolicy{
+			Dimensions: []string{"sender"},
+		},
+	})
+
+	b.EnsureSessionMetadata(allocation.SessionKey, scope, allocation.SessionAliases)
+
+	if got := b.ResolveSessionKey(legacyKey); got != allocation.SessionKey {
+		t.Fatalf("ResolveSessionKey() = %q, want %q", got, allocation.SessionKey)
+	}
+	history := b.GetHistory(allocation.SessionKey)
+	if len(history) != 1 || history[0].Content != "legacy pico history" {
+		t.Fatalf("promoted history = %+v", history)
 	}
 }

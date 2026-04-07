@@ -44,6 +44,7 @@ func AllocateRouteSession(input AllocationInput) Allocation {
 
 func buildSessionScope(input AllocationInput) SessionScope {
 	inbound := input.Context
+	includeTopicInChatDimension := shouldPreserveTelegramForumIsolation(input)
 	scope := SessionScope{
 		Version: ScopeVersionV1,
 		AgentID: routing.NormalizeAgentID(input.AgentID),
@@ -72,6 +73,11 @@ func buildSessionScope(input AllocationInput) SessionScope {
 			chatID := strings.TrimSpace(inbound.ChatID)
 			if chatID == "" {
 				continue
+			}
+			if includeTopicInChatDimension {
+				if topicID := strings.TrimSpace(inbound.TopicID); topicID != "" {
+					chatID = chatID + "/" + topicID
+				}
 			}
 			chatType := strings.ToLower(strings.TrimSpace(inbound.ChatType))
 			if chatType == "" {
@@ -111,18 +117,16 @@ func buildLegacySessionAliases(input AllocationInput) []string {
 	inbound := input.Context
 
 	if strings.EqualFold(strings.TrimSpace(inbound.ChatType), "direct") {
-		senderID := CanonicalSessionIdentityID(
-			inbound.Channel,
-			inbound.SenderID,
-			input.SessionPolicy.IdentityLinks,
-		)
-		if senderID == "" {
+		peerIDs := buildLegacyDirectPeerIDs(input)
+		if len(peerIDs) == 0 {
 			return uniqueAliases(aliases)
 		}
-		aliases = append(
-			aliases,
-			BuildLegacyDirectAliases(input.AgentID, inbound.Channel, inbound.Account, senderID)...,
-		)
+		for _, peerID := range peerIDs {
+			aliases = append(
+				aliases,
+				BuildLegacyDirectAliases(input.AgentID, inbound.Channel, inbound.Account, peerID)...,
+			)
+		}
 		return uniqueAliases(aliases)
 	}
 
@@ -141,6 +145,48 @@ func buildLegacySessionAliases(input AllocationInput) []string {
 	))
 
 	return uniqueAliases(aliases)
+}
+
+func shouldPreserveTelegramForumIsolation(input AllocationInput) bool {
+	inbound := input.Context
+	if !strings.EqualFold(strings.TrimSpace(inbound.Channel), "telegram") {
+		return false
+	}
+	if strings.TrimSpace(inbound.TopicID) == "" {
+		return false
+	}
+	for _, dimension := range input.SessionPolicy.Dimensions {
+		if strings.EqualFold(strings.TrimSpace(dimension), "topic") {
+			return false
+		}
+	}
+	return true
+}
+
+func buildLegacyDirectPeerIDs(input AllocationInput) []string {
+	inbound := input.Context
+	peerIDs := make([]string, 0, 3)
+
+	rawSenderID := strings.TrimSpace(inbound.SenderID)
+	if rawSenderID != "" {
+		peerIDs = append(peerIDs, strings.ToLower(rawSenderID))
+	}
+
+	canonicalSenderID := CanonicalSessionIdentityID(
+		inbound.Channel,
+		inbound.SenderID,
+		input.SessionPolicy.IdentityLinks,
+	)
+	if canonicalSenderID != "" {
+		peerIDs = append(peerIDs, canonicalSenderID)
+	}
+
+	chatID := strings.TrimSpace(inbound.ChatID)
+	if chatID != "" {
+		peerIDs = append(peerIDs, strings.ToLower(chatID))
+	}
+
+	return uniqueAliases(peerIDs)
 }
 
 func uniqueAliases(aliases []string) []string {

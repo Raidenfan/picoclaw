@@ -425,6 +425,52 @@ func TestLoadConfig_PrefersDispatchRulesOverLegacyBindings(t *testing.T) {
 	}
 }
 
+func TestLoadConfig_MigratesLegacyDirectBindingsWithIdentityLinks(t *testing.T) {
+	dir := t.TempDir()
+	configPath := filepath.Join(dir, "config.json")
+	raw := `{
+		"version": 2,
+		"agents": {
+			"defaults": {
+				"workspace": "~/.picoclaw/workspace",
+				"model": "glm-4.7"
+			},
+			"list": [
+				{ "id": "main", "default": true },
+				{ "id": "support" }
+			]
+		},
+		"session": {
+			"identity_links": {
+				"john": ["telegram:123", "123"]
+			}
+		},
+		"bindings": [
+			{
+				"agent_id": "support",
+				"match": {
+					"channel": "telegram",
+					"peer": { "kind": "direct", "id": "123" }
+				}
+			}
+		]
+	}`
+	if err := os.WriteFile(configPath, []byte(raw), 0o644); err != nil {
+		t.Fatalf("WriteFile(configPath): %v", err)
+	}
+
+	cfg, err := LoadConfig(configPath)
+	if err != nil {
+		t.Fatalf("LoadConfig() error: %v", err)
+	}
+	if cfg.Agents.Dispatch == nil || len(cfg.Agents.Dispatch.Rules) != 1 {
+		t.Fatalf("Dispatch.Rules = %+v, want 1 migrated rule", cfg.Agents.Dispatch)
+	}
+	if got := cfg.Agents.Dispatch.Rules[0].When.Sender; got != "john" {
+		t.Fatalf("migrated sender selector = %q, want %q", got, "john")
+	}
+}
+
 // TestDefaultConfig_HeartbeatEnabled verifies heartbeat is enabled by default
 func TestDefaultConfig_HeartbeatEnabled(t *testing.T) {
 	cfg := DefaultConfig()

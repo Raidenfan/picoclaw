@@ -527,6 +527,38 @@ func TestSend_WithForumThreadID(t *testing.T) {
 	assert.Len(t, caller.calls, 1)
 }
 
+func TestSend_UsesContextTopicIDWhenChatIDDoesNotIncludeThread(t *testing.T) {
+	caller := &stubCaller{
+		callFn: func(ctx context.Context, url string, data *ta.RequestData) (*ta.Response, error) {
+			return successResponse(t), nil
+		},
+	}
+	ch := newTestChannel(t, caller)
+
+	_, err := ch.Send(context.Background(), bus.OutboundMessage{
+		ChatID:  "-1001234567890",
+		Content: "Hello from topic context",
+		Context: bus.InboundContext{
+			Channel: "telegram",
+			ChatID:  "-1001234567890",
+			TopicID: "42",
+		},
+	})
+
+	require.NoError(t, err)
+	require.Len(t, caller.calls, 1)
+
+	var params struct {
+		ChatID          int64  `json:"chat_id"`
+		MessageThreadID int    `json:"message_thread_id"`
+		Text            string `json:"text"`
+	}
+	require.NoError(t, json.Unmarshal(caller.calls[0].Data.BodyRaw, &params))
+	assert.Equal(t, int64(-1001234567890), params.ChatID)
+	assert.Equal(t, 42, params.MessageThreadID)
+	assert.Equal(t, "Hello from topic context", params.Text)
+}
+
 func TestHandleMessage_ForumTopic_SetsMetadata(t *testing.T) {
 	messageBus := bus.NewMessageBus()
 	ch := &TelegramChannel{

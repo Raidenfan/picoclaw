@@ -65,10 +65,5 @@ func cloneStringMap(src map[string]string) map[string]string {
 }
 
 func normalizeKind(kind string) string {
-	switch strings.ToLower(strings.TrimSpace(kind)) {
-	case "direct", "group", "channel", "guild", "team", "workspace", "tenant", "topic":
-		return strings.ToLower(strings.TrimSpace(kind))
-	default:
-		return strings.ToLower(strings.TrimSpace(kind))
-	}
+	return strings.ToLower(strings.TrimSpace(kind))
 }

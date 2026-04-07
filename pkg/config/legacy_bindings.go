@@ -57,7 +57,7 @@ func applyLegacyBindingsMigration(data []byte, cfg *Config) {
 		return
 	}
 
-	rules, dropped := migrateLegacyBindings(bindings)
+	rules, dropped := migrateLegacyBindings(bindings, cfg.Session.IdentityLinks)
 	if len(rules) == 0 {
 		logger.WarnF(
 			"legacy bindings config is deprecated and could not be migrated",
@@ -97,7 +97,7 @@ func decodeLegacyBindings(data []byte) ([]legacyAgentBinding, bool, error) {
 	return bindings, true, nil
 }
 
-func migrateLegacyBindings(bindings []legacyAgentBinding) ([]DispatchRule, int) {
+func migrateLegacyBindings(bindings []legacyAgentBinding, identityLinks map[string][]string) ([]DispatchRule, int) {
 	if len(bindings) == 0 {
 		return nil, 0
 	}
@@ -111,7 +111,7 @@ func migrateLegacyBindings(bindings []legacyAgentBinding) ([]DispatchRule, int) 
 	prioritized := make([]prioritizedRule, 0, len(bindings))
 	dropped := 0
 	for i, binding := range bindings {
-		rule, kind, ok := migrateLegacyBinding(binding, i)
+		rule, kind, ok := migrateLegacyBinding(binding, i, identityLinks)
 		if !ok {
 			dropped++
 			continue
@@ -133,7 +133,11 @@ func migrateLegacyBindings(bindings []legacyAgentBinding) ([]DispatchRule, int) 
 	return rules, dropped
 }
 
-func migrateLegacyBinding(binding legacyAgentBinding, index int) (DispatchRule, int, bool) {
+func migrateLegacyBinding(
+	binding legacyAgentBinding,
+	index int,
+	identityLinks map[string][]string,
+) (DispatchRule, int, bool) {
 	channel := strings.ToLower(strings.TrimSpace(binding.Match.Channel))
 	agentID := strings.TrimSpace(binding.AgentID)
 	if channel == "" || agentID == "" {
@@ -163,7 +167,7 @@ func migrateLegacyBinding(binding legacyAgentBinding, index int) (DispatchRule, 
 		}
 		switch peerKind {
 		case "direct":
-			rule.When.Sender = peerID
+			rule.When.Sender = canonicalLegacyBindingSenderID(channel, peerID, identityLinks)
 			return rule, 0, true
 		case "group", "channel":
 			rule.When.Chat = peerKind + ":" + peerID
@@ -206,4 +210,58 @@ func normalizeLegacyAccountSelector(accountID string) string {
 	default:
 		return strings.ToLower(accountID)
 	}
+}
+
+func canonicalLegacyBindingSenderID(channel, peerID string, identityLinks map[string][]string) string {
+	peerID = strings.TrimSpace(peerID)
+	if peerID == "" {
+		return ""
+	}
+
+	if linked := resolveLegacyBindingLinkedID(identityLinks, channel, peerID); linked != "" {
+		return strings.ToLower(linked)
+	}
+
+	return strings.ToLower(peerID)
+}
+
+func resolveLegacyBindingLinkedID(identityLinks map[string][]string, channel, peerID string) string {
+	if len(identityLinks) == 0 {
+		return ""
+	}
+	peerID = strings.TrimSpace(peerID)
+	if peerID == "" {
+		return ""
+	}
+
+	candidates := make(map[string]struct{})
+	rawCandidate := strings.ToLower(peerID)
+	if rawCandidate != "" {
+		candidates[rawCandidate] = struct{}{}
+	}
+	channel = strings.ToLower(strings.TrimSpace(channel))
+	if channel != "" {
+		candidates[channel+":"+rawCandidate] = struct{}{}
+	}
+	if idx := strings.Index(rawCandidate, ":"); idx > 0 && idx < len(rawCandidate)-1 {
+		candidates[rawCandidate[idx+1:]] = struct{}{}
+	}
+
+	for canonical, ids := range identityLinks {
+		canonical = strings.TrimSpace(canonical)
+		if canonical == "" {
+			continue
+		}
+		for _, id := range ids {
+			normalized := strings.ToLower(strings.TrimSpace(id))
+			if normalized == "" {
+				continue
+			}
+			if _, ok := candidates[normalized]; ok {
+				return canonical
+			}
+		}
+	}
+
+	return ""
 }

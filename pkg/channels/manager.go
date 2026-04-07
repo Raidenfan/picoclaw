@@ -103,7 +103,7 @@ func outboundMessageChannel(msg bus.OutboundMessage) string {
 }
 
 func outboundMessageChatID(msg bus.OutboundMessage) string {
-	return msg.Context.ChatID
+	return msg.ChatID
 }
 
 func outboundMediaChannel(msg bus.OutboundMediaMessage) string {
@@ -111,7 +111,7 @@ func outboundMediaChannel(msg bus.OutboundMediaMessage) string {
 }
 
 func outboundMediaChatID(msg bus.OutboundMediaMessage) string {
-	return msg.Context.ChatID
+	return msg.ChatID
 }
 
 // RecordPlaceholder registers a placeholder message for later editing.

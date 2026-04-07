@@ -113,7 +113,7 @@ func (c *SlackChannel) Send(ctx context.Context, msg bus.OutboundMessage) ([]str
 		return nil, channels.ErrNotRunning
 	}
 
-	channelID, threadTS := parseSlackChatID(msg.ChatID)
+	deliveryChatID, channelID, threadTS := resolveSlackOutboundTarget(msg.ChatID, &msg.Context)
 	if channelID == "" {
 		return nil, fmt.Errorf("invalid slack chat ID: %s", msg.ChatID)
 	}
@@ -135,7 +135,7 @@ func (c *SlackChannel) Send(ctx context.Context, msg bus.OutboundMessage) ([]str
 		return nil, fmt.Errorf("slack send: %w", channels.ErrTemporary)
 	}
 
-	if ref, ok := c.pendingAcks.LoadAndDelete(msg.ChatID); ok {
+	if ref, ok := c.pendingAcks.LoadAndDelete(deliveryChatID); ok {
 		msgRef := ref.(slackMessageRef)
 		c.api.AddReaction("white_check_mark", slack.ItemRef{
 			Channel:   msgRef.ChannelID,
@@ -157,7 +157,7 @@ func (c *SlackChannel) SendMedia(ctx context.Context, msg bus.OutboundMediaMessa
 		return nil, channels.ErrNotRunning
 	}
 
-	channelID, _ := parseSlackChatID(msg.ChatID)
+	_, channelID, threadTS := resolveSlackMediaOutboundTarget(msg.ChatID, &msg.Context)
 	if channelID == "" {
 		return nil, fmt.Errorf("invalid slack chat ID: %s", msg.ChatID)
 	}
@@ -188,10 +188,11 @@ func (c *SlackChannel) SendMedia(ctx context.Context, msg bus.OutboundMediaMessa
 		}
 
 		_, err = c.api.UploadFileV2Context(ctx, slack.UploadFileV2Parameters{
-			Channel:  channelID,
-			File:     localPath,
-			Filename: filename,
-			Title:    title,
+			Channel:         channelID,
+			ThreadTimestamp: threadTS,
+			File:            localPath,
+			Filename:        filename,
+			Title:           title,
 		})
 		if err != nil {
 			logger.ErrorCF("slack", "Failed to upload media", map[string]any{
@@ -560,4 +561,34 @@ func parseSlackChatID(chatID string) (channelID, threadTS string) {
 		threadTS = parts[1]
 	}
 	return channelID, threadTS
+}
+
+func resolveSlackOutboundTarget(chatID string, outboundCtx *bus.InboundContext) (string, string, string) {
+	deliveryChatID := strings.TrimSpace(chatID)
+	if deliveryChatID == "" && outboundCtx != nil {
+		deliveryChatID = strings.TrimSpace(outboundCtx.ChatID)
+	}
+	channelID, threadTS := parseSlackChatID(deliveryChatID)
+	if threadTS == "" && outboundCtx != nil {
+		threadTS = strings.TrimSpace(outboundCtx.TopicID)
+		if threadTS != "" && channelID != "" {
+			deliveryChatID = channelID + "/" + threadTS
+		}
+	}
+	return deliveryChatID, channelID, threadTS
+}
+
+func resolveSlackMediaOutboundTarget(chatID string, outboundCtx *bus.InboundContext) (string, string, string) {
+	deliveryChatID := strings.TrimSpace(chatID)
+	if deliveryChatID == "" && outboundCtx != nil {
+		deliveryChatID = strings.TrimSpace(outboundCtx.ChatID)
+	}
+	channelID, threadTS := parseSlackChatID(deliveryChatID)
+	if threadTS == "" && outboundCtx != nil {
+		threadTS = strings.TrimSpace(outboundCtx.TopicID)
+		if threadTS != "" && channelID != "" {
+			deliveryChatID = channelID + "/" + threadTS
+		}
+	}
+	return deliveryChatID, channelID, threadTS
 }

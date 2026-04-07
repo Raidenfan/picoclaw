@@ -80,6 +80,65 @@ func TestAllocateRouteSession_GroupPeer(t *testing.T) {
 	}
 }
 
+func TestAllocateRouteSession_TelegramForumTopicsRemainIsolatedByDefault(t *testing.T) {
+	first := AllocateRouteSession(AllocationInput{
+		AgentID: "main",
+		Context: bus.InboundContext{
+			Channel:  "telegram",
+			ChatID:   "-1001234567890",
+			ChatType: "group",
+			TopicID:  "42",
+			SenderID: "7",
+		},
+		SessionPolicy: routing.SessionPolicy{
+			Dimensions: []string{"chat"},
+		},
+	})
+	second := AllocateRouteSession(AllocationInput{
+		AgentID: "main",
+		Context: bus.InboundContext{
+			Channel:  "telegram",
+			ChatID:   "-1001234567890",
+			ChatType: "group",
+			TopicID:  "99",
+			SenderID: "7",
+		},
+		SessionPolicy: routing.SessionPolicy{
+			Dimensions: []string{"chat"},
+		},
+	})
+
+	if first.SessionKey == second.SessionKey {
+		t.Fatalf("forum topics should not share default session key: %q", first.SessionKey)
+	}
+	if got := first.Scope.Values["chat"]; got != "group:-1001234567890/42" {
+		t.Fatalf("first.Scope.Values[chat] = %q, want %q", got, "group:-1001234567890/42")
+	}
+	if got := second.Scope.Values["chat"]; got != "group:-1001234567890/99" {
+		t.Fatalf("second.Scope.Values[chat] = %q, want %q", got, "group:-1001234567890/99")
+	}
+}
+
+func TestAllocateRouteSession_PicoDirectAliasesIncludeLegacyChatKey(t *testing.T) {
+	allocation := AllocateRouteSession(AllocationInput{
+		AgentID: "main",
+		Context: bus.InboundContext{
+			Channel:  "pico",
+			Account:  "default",
+			ChatID:   "pico:session-123",
+			ChatType: "direct",
+			SenderID: "pico-user",
+		},
+		SessionPolicy: routing.SessionPolicy{
+			Dimensions: []string{"sender"},
+		},
+	})
+
+	if !containsAlias(allocation.SessionAliases, "agent:main:pico:direct:pico:session-123") {
+		t.Fatalf("SessionAliases = %v, want pico legacy alias", allocation.SessionAliases)
+	}
+}
+
 func TestBuildOpaqueSessionKey_IsStable(t *testing.T) {
 	first := BuildOpaqueSessionKey("agent:main:direct:user123")
 	second := BuildOpaqueSessionKey("agent:main:direct:user123")

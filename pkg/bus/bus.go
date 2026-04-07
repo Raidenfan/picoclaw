@@ -90,10 +90,10 @@ func publish[T any](ctx context.Context, mb *MessageBus, ch chan T, msg T) error
 }
 
 func (mb *MessageBus) PublishInbound(ctx context.Context, msg InboundMessage) error {
+	msg = NormalizeInboundMessage(msg)
 	if msg.Context.isZero() {
 		return ErrMissingInboundContext
 	}
-	msg = NormalizeInboundMessage(msg)
 	return publish(ctx, mb, mb.inbound, msg)
 }
 
@@ -102,10 +102,10 @@ func (mb *MessageBus) InboundChan() <-chan InboundMessage {
 }
 
 func (mb *MessageBus) PublishOutbound(ctx context.Context, msg OutboundMessage) error {
+	msg = NormalizeOutboundMessage(msg)
 	if msg.Context.isZero() {
 		return ErrMissingOutboundContext
 	}
-	msg = NormalizeOutboundMessage(msg)
 	return publish(ctx, mb, mb.outbound, msg)
 }
 
@@ -114,10 +114,10 @@ func (mb *MessageBus) OutboundChan() <-chan OutboundMessage {
 }
 
 func (mb *MessageBus) PublishOutboundMedia(ctx context.Context, msg OutboundMediaMessage) error {
+	msg = NormalizeOutboundMediaMessage(msg)
 	if msg.Context.isZero() {
 		return ErrMissingOutboundMediaContext
 	}
-	msg = NormalizeOutboundMediaMessage(msg)
 	return publish(ctx, mb, mb.outboundMedia, msg)
 }
 

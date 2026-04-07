@@ -805,6 +805,8 @@ func outboundTurnMetadata(
 func outboundMessageForTurn(ts *turnState, content string) bus.OutboundMessage {
 	agentID, sessionKey, scope := outboundTurnMetadata(ts.agent.ID, ts.sessionKey, ts.opts.Dispatch.SessionScope)
 	return bus.OutboundMessage{
+		Channel: ts.channel,
+		ChatID:  ts.chatID,
 		Context: outboundContextFromInbound(
 			ts.opts.Dispatch.InboundContext,
 			ts.channel,
@@ -2827,6 +2829,8 @@ turnLoop:
 					parts = append(parts, part)
 				}
 				outboundMedia := bus.OutboundMediaMessage{
+					Channel: ts.channel,
+					ChatID:  ts.chatID,
 					Context: outboundContextFromInbound(
 						ts.opts.Dispatch.InboundContext,
 						ts.channel,

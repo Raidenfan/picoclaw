@@ -3,6 +3,7 @@ package agent
 import (
 	"context"
 	"fmt"
+	"sort"
 	"strings"
 	"sync"
 
@@ -319,7 +320,9 @@ func (al *AgentLoop) agentForSession(sessionKey string) *AgentInstance {
 		return nil
 	}
 
-	for _, agentID := range registry.ListAgentIDs() {
+	agentIDs := registry.ListAgentIDs()
+	sort.Strings(agentIDs)
+	for _, agentID := range agentIDs {
 		agent, ok := registry.GetAgent(agentID)
 		if !ok || agent == nil {
 			continue
@@ -331,7 +334,6 @@ func (al *AgentLoop) agentForSession(sessionKey string) *AgentInstance {
 		if scopedAgent, ok := registry.GetAgent(resolvedAgentID); ok {
 			return scopedAgent
 		}
-		return agent
 	}
 
 	return registry.GetDefaultAgent()

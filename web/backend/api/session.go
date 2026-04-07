@@ -256,16 +256,39 @@ func (h *Handler) findPicoJSONLSessions(dir string) ([]picoJSONLSessionRef, erro
 
 	refs := make([]picoJSONLSessionRef, 0)
 	seen := make(map[string]struct{})
+	metaBackedBases := make(map[string]struct{})
 	for _, entry := range entries {
 		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".meta.json") {
 			continue
 		}
-		metaPath := filepath.Join(dir, entry.Name())
+		name := entry.Name()
+		metaPath := filepath.Join(dir, name)
 		meta, err := h.readSessionMeta(metaPath, "")
 		if err != nil {
 			continue
 		}
 		ref, ok := sessionRefFromMeta(meta)
+		if !ok || ref.Key == "" || ref.ID == "" {
+			continue
+		}
+		metaBackedBases[strings.TrimSuffix(name, ".meta.json")] = struct{}{}
+		if _, exists := seen[ref.ID]; exists {
+			continue
+		}
+		seen[ref.ID] = struct{}{}
+		refs = append(refs, ref)
+	}
+
+	for _, entry := range entries {
+		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".jsonl") {
+			continue
+		}
+		name := entry.Name()
+		base := strings.TrimSuffix(name, ".jsonl")
+		if _, ok := metaBackedBases[base]; ok {
+			continue
+		}
+		ref, ok := jsonlSessionRefFromFilename(name)
 		if !ok || ref.Key == "" || ref.ID == "" {
 			continue
 		}
@@ -300,7 +323,8 @@ func (h *Handler) findLegacyPicoSessions(dir string) ([]picoLegacySessionRef, er
 	refs := make([]picoLegacySessionRef, 0)
 	seen := make(map[string]struct{})
 	for _, entry := range entries {
-		if entry.IsDir() || filepath.Ext(entry.Name()) != ".json" {
+		name := entry.Name()
+		if entry.IsDir() || filepath.Ext(name) != ".json" || strings.HasSuffix(name, ".meta.json") {
 			continue
 		}
 
@@ -321,6 +345,37 @@ func (h *Handler) findLegacyPicoSessions(dir string) ([]picoLegacySessionRef, er
 		refs = append(refs, picoLegacySessionRef{ID: sessionID, Path: path})
 	}
 	return refs, nil
+}
+
+func jsonlSessionRefFromFilename(name string) (picoJSONLSessionRef, bool) {
+	if !strings.HasSuffix(name, ".jsonl") {
+		return picoJSONLSessionRef{}, false
+	}
+	base := strings.TrimSuffix(name, ".jsonl")
+	if base == "" {
+		return picoJSONLSessionRef{}, false
+	}
+
+	legacyPrefix := sanitizeSessionKey(legacyPicoSessionPrefix)
+	if strings.HasPrefix(base, legacyPrefix) {
+		sessionID := strings.TrimPrefix(base, legacyPrefix)
+		if sessionID == "" {
+			return picoJSONLSessionRef{}, false
+		}
+		return picoJSONLSessionRef{
+			ID:  sessionID,
+			Key: legacyPicoSessionPrefix + sessionID,
+		}, true
+	}
+
+	if session.IsOpaqueSessionKey(base) {
+		return picoJSONLSessionRef{
+			ID:  base,
+			Key: base,
+		}, true
+	}
+
+	return picoJSONLSessionRef{}, false
 }
 
 func (h *Handler) findLegacyPicoSession(dir, sessionID string) (picoLegacySessionRef, error) {
