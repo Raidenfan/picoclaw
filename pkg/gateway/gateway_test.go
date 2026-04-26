@@ -1,14 +1,19 @@
 package gateway
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
+	"github.com/sipeed/picoclaw/pkg/agent"
+	"github.com/sipeed/picoclaw/pkg/bus"
 	"github.com/sipeed/picoclaw/pkg/config"
+	runtimeevents "github.com/sipeed/picoclaw/pkg/events"
 )
 
 func TestRun_StartupFailuresReturnErrorAndEmitStructuredLog(t *testing.T) {
@@ -105,4 +110,65 @@ func TestGatewayRunStartupFailureHelper(t *testing.T) {
 
 	fmt.Fprintln(os.Stdout, err.Error())
 	os.Exit(0)
+}
+
+func TestPublishGatewayEvent(t *testing.T) {
+	eventBus := runtimeevents.NewBus()
+	t.Cleanup(func() {
+		if err := eventBus.Close(); err != nil {
+			t.Fatalf("Close runtime event bus: %v", err)
+		}
+	})
+
+	ctx, cancel := context.WithCancel(context.Background())
+	t.Cleanup(cancel)
+	sub, eventsCh, err := eventBus.Channel().OfKind(runtimeevents.KindGatewayStart).SubscribeChan(
+		ctx,
+		runtimeevents.SubscribeOptions{Name: "gateway-test", Buffer: 4},
+	)
+	if err != nil {
+		t.Fatalf("SubscribeChan() error = %v", err)
+	}
+	t.Cleanup(func() {
+		if err := sub.Close(); err != nil {
+			t.Fatalf("Close subscription: %v", err)
+		}
+	})
+
+	al := agent.NewAgentLoop(
+		config.DefaultConfig(),
+		bus.NewMessageBus(),
+		&startupBlockedProvider{reason: "not used"},
+		agent.WithRuntimeEvents(eventBus),
+	)
+	t.Cleanup(al.Close)
+
+	startedAt := time.Now().Add(-1500 * time.Millisecond)
+	publishGatewayEvent(al, runtimeevents.KindGatewayStart, startedAt, nil)
+
+	evt := receiveGatewayRuntimeEvent(t, eventsCh)
+	if evt.Kind != runtimeevents.KindGatewayStart ||
+		evt.Source.Component != "gateway" ||
+		evt.Severity != runtimeevents.SeverityInfo {
+		t.Fatalf("gateway event = %+v", evt)
+	}
+	payload, ok := evt.Payload.(gatewayEventPayload)
+	if !ok {
+		t.Fatalf("payload type = %T, want gatewayEventPayload", evt.Payload)
+	}
+	if payload.DurationMS <= 0 {
+		t.Fatalf("DurationMS = %d, want positive", payload.DurationMS)
+	}
+}
+
+func receiveGatewayRuntimeEvent(t *testing.T, ch <-chan runtimeevents.Event) runtimeevents.Event {
+	t.Helper()
+
+	select {
+	case evt := <-ch:
+		return evt
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for gateway runtime event")
+		return runtimeevents.Event{}
+	}
 }

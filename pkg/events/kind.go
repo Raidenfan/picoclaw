@@ -75,6 +75,12 @@ const (
 	// KindBusCloseDrained is emitted when message bus close drains buffered messages.
 	KindBusCloseDrained Kind = "bus.close.drained"
 
+	// KindGatewayStart is emitted when gateway startup reaches runtime bootstrap.
+	KindGatewayStart Kind = "gateway.start"
+	// KindGatewayReady is emitted when gateway services are started and ready.
+	KindGatewayReady Kind = "gateway.ready"
+	// KindGatewayShutdown is emitted when gateway shutdown starts.
+	KindGatewayShutdown Kind = "gateway.shutdown"
 	// KindGatewayReloadStarted is emitted when gateway reload starts.
 	KindGatewayReloadStarted Kind = "gateway.reload.started"
 	// KindGatewayReloadCompleted is emitted when gateway reload completes.

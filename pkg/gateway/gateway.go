@@ -115,6 +115,7 @@ func (p *startupBlockedProvider) GetDefaultModel() string {
 
 // Run starts the gateway runtime using the configuration loaded from configPath.
 func Run(debug bool, homePath, configPath string, allowEmptyStartup bool) (runErr error) {
+	startedAt := time.Now()
 	panicPath := filepath.Join(homePath, logPath, panicFile)
 	panicFunc, err := logger.InitPanic(panicPath)
 	if err != nil {
@@ -199,6 +200,7 @@ func Run(debug bool, homePath, configPath string, allowEmptyStartup bool) (runEr
 	msgBus := bus.NewMessageBus()
 	agentLoop := agent.NewAgentLoop(cfg, msgBus, provider)
 	msgBus.SetEventPublisher(agentLoop.RuntimeEventBus())
+	publishGatewayEvent(agentLoop, runtimeevents.KindGatewayStart, startedAt, nil)
 
 	fmt.Println("\n📦 Agent Status:")
 	startupInfo := agentLoop.GetStartupInfo()
@@ -218,6 +220,7 @@ func Run(debug bool, homePath, configPath string, allowEmptyStartup bool) (runEr
 	if err != nil {
 		return err
 	}
+	publishGatewayEvent(agentLoop, runtimeevents.KindGatewayReady, startedAt, nil)
 	closeListeners = false
 
 	// Setup manual reload channel for /reload endpoint
@@ -316,14 +319,14 @@ func executeReload(
 	debug bool,
 ) (err error) {
 	startedAt := time.Now()
-	publishGatewayReloadEvent(agentLoop, runtimeevents.KindGatewayReloadStarted, startedAt, nil)
+	publishGatewayEvent(agentLoop, runtimeevents.KindGatewayReloadStarted, startedAt, nil)
 	defer runningServices.reloading.Store(false)
 	defer func() {
 		if err != nil {
-			publishGatewayReloadEvent(agentLoop, runtimeevents.KindGatewayReloadFailed, startedAt, err)
+			publishGatewayEvent(agentLoop, runtimeevents.KindGatewayReloadFailed, startedAt, err)
 			return
 		}
-		publishGatewayReloadEvent(agentLoop, runtimeevents.KindGatewayReloadCompleted, startedAt, nil)
+		publishGatewayEvent(agentLoop, runtimeevents.KindGatewayReloadCompleted, startedAt, nil)
 	}()
 
 	err = handleConfigReload(ctx, agentLoop, newCfg, provider, runningServices, msgBus, allowEmptyStartup, debug)
@@ -509,6 +512,8 @@ func shutdownGateway(
 	provider providers.LLMProvider,
 	fullShutdown bool,
 ) {
+	publishGatewayEvent(agentLoop, runtimeevents.KindGatewayShutdown, time.Time{}, nil)
+
 	if cp, ok := provider.(providers.StatefulProvider); ok && fullShutdown {
 		cp.Close()
 	}

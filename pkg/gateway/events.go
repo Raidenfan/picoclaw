@@ -10,12 +10,12 @@ import (
 
 const gatewayEventPublishTimeout = 100 * time.Millisecond
 
-type gatewayReloadPayload struct {
+type gatewayEventPayload struct {
 	DurationMS int64  `json:"duration_ms,omitempty"`
 	Error      string `json:"error,omitempty"`
 }
 
-func publishGatewayReloadEvent(
+func publishGatewayEvent(
 	al *agent.AgentLoop,
 	kind runtimeevents.Kind,
 	startedAt time.Time,
@@ -26,7 +26,7 @@ func publishGatewayReloadEvent(
 	}
 
 	severity := runtimeevents.SeverityInfo
-	payload := gatewayReloadPayload{}
+	payload := gatewayEventPayload{}
 	if !startedAt.IsZero() {
 		payload.DurationMS = time.Since(startedAt).Milliseconds()
 	}
