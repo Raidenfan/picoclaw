@@ -140,7 +140,7 @@ func TestSpawnSubTurn(t *testing.T) {
 				agent:          al.registry.GetDefaultAgent(),
 			}
 
-			// Subscribe to real EventBus to capture events
+			// Subscribe to runtime events to capture sub-turn lifecycle.
 			collector, collectCleanup := newEventCollector(t, al)
 			defer collectCleanup()
 

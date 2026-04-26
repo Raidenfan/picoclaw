@@ -356,14 +356,11 @@ func runProcessHookHelper() error {
 		}
 
 		if msg.ID == 0 {
-			if (msg.Method == "hook.event" || msg.Method == "hook.runtime_event") && eventLog != "" {
+			if msg.Method == "hook.runtime_event" && eventLog != "" {
 				var evt map[string]any
 				if err := json.Unmarshal(msg.Params, &evt); err == nil {
 					if kind, ok := evt["kind"].(string); ok {
 						_ = os.WriteFile(eventLog, []byte(kind+"\n"), 0o644)
-					} else if rawKind, ok := evt["Kind"].(float64); ok {
-						kind := EventKind(rawKind)
-						_ = os.WriteFile(eventLog, []byte(kind.String()+"\n"), 0o644)
 					}
 				}
 			}

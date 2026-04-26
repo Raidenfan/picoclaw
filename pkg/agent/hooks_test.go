@@ -112,14 +112,14 @@ func (p *llmHookTestProvider) GetDefaultModel() string {
 }
 
 type llmObserverHook struct {
-	eventCh     chan Event
+	eventCh     chan runtimeevents.Event
 	lastInbound *bus.InboundContext
 	lastRoute   *routing.ResolvedRoute
 	lastScope   *session.SessionScope
 }
 
-func (h *llmObserverHook) OnEvent(ctx context.Context, evt Event) error {
-	if evt.Kind == EventKindTurnEnd {
+func (h *llmObserverHook) OnRuntimeEvent(ctx context.Context, evt runtimeevents.Event) error {
+	if evt.Kind == runtimeevents.KindAgentTurnEnd {
 		select {
 		case h.eventCh <- evt:
 		default:
@@ -443,7 +443,7 @@ func TestAgentLoop_Hooks_ObserverAndLLMInterceptor(t *testing.T) {
 	al, agent, cleanup := newHookTestLoop(t, provider)
 	defer cleanup()
 
-	hook := &llmObserverHook{eventCh: make(chan Event, 1)}
+	hook := &llmObserverHook{eventCh: make(chan runtimeevents.Event, 1)}
 	if err := al.MountHook(NamedHook("llm-observer", hook)); err != nil {
 		t.Fatalf("MountHook failed: %v", err)
 	}
@@ -507,17 +507,15 @@ func TestAgentLoop_Hooks_ObserverAndLLMInterceptor(t *testing.T) {
 
 	select {
 	case evt := <-hook.eventCh:
-		if evt.Kind != EventKindTurnEnd {
+		if evt.Kind != runtimeevents.KindAgentTurnEnd {
 			t.Fatalf("expected turn end event, got %v", evt.Kind)
 		}
-		if evt.Context == nil || evt.Context.Inbound == nil {
-			t.Fatal("expected observer event to carry inbound context")
-		}
-		if evt.Context.Route == nil || evt.Context.Route.AgentID != "main" {
-			t.Fatalf("expected observer event to carry route context, got %+v", evt.Context.Route)
-		}
-		if evt.Context.Scope == nil || evt.Context.Scope.Values["sender"] != "hook-user" {
-			t.Fatalf("expected observer event to carry session scope, got %+v", evt.Context.Scope)
+		if evt.Scope.AgentID != "main" ||
+			evt.Scope.SessionKey != "session-1" ||
+			evt.Scope.Channel != "cli" ||
+			evt.Scope.ChatID != "direct" ||
+			evt.Scope.SenderID != "hook-user" {
+			t.Fatalf("runtime observer scope = %+v", evt.Scope)
 		}
 	case <-time.After(2 * time.Second):
 		t.Fatal("timed out waiting for hook observer event")
@@ -589,7 +587,7 @@ func TestAgentLoop_BtwCommand_UsesLLMHooks(t *testing.T) {
 	defer cleanup()
 	useTestSideQuestionProvider(al, provider)
 
-	hook := &llmObserverHook{eventCh: make(chan Event, 1)}
+	hook := &llmObserverHook{eventCh: make(chan runtimeevents.Event, 1)}
 	if err := al.MountHook(NamedHook("llm-observer", hook)); err != nil {
 		t.Fatalf("MountHook failed: %v", err)
 	}
