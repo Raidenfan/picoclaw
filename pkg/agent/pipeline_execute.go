@@ -91,7 +91,7 @@ toolLoop:
 						feedbackMsg := utils.FormatToolFeedbackMessage(
 							toolName,
 							toolFeedbackExplanation,
-							toolFeedbackArgsPreviewWithOptions(toolArgs, toolFeedbackMaxLen, al.cfg.Agents.Defaults.ToolFeedback.PrettyPrint, al.cfg.Agents.Defaults.ToolFeedback.DisableEscapeHTML),
+toolFeedbackArgsPreview(toolArgs, toolFeedbackMaxLen),
 						)
 						fbCtx, fbCancel := context.WithTimeout(turnCtx, 3*time.Second)
 						_ = al.bus.PublishOutbound(fbCtx, outboundMessageForTurnWithKind(ts, feedbackMsg, messageKindToolFeedback))
@@ -373,7 +373,7 @@ toolLoop:
 			feedbackMsg := utils.FormatToolFeedbackMessage(
 				toolName,
 				toolFeedbackExplanation,
-				toolFeedbackArgsPreviewWithOptions(toolArgs, toolFeedbackMaxLen, al.cfg.Agents.Defaults.ToolFeedback.PrettyPrint, al.cfg.Agents.Defaults.ToolFeedback.DisableEscapeHTML),
+				toolFeedbackArgsPreview(toolArgs, toolFeedbackMaxLen),
 			)
 			fbCtx, fbCancel := context.WithTimeout(turnCtx, 3*time.Second)
 			_ = al.bus.PublishOutbound(fbCtx, outboundMessageForTurnWithKind(ts, feedbackMsg, messageKindToolFeedback))

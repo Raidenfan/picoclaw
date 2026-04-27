@@ -4,7 +4,6 @@ package agent
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"maps"
 	"path/filepath"
@@ -177,19 +176,7 @@ func toolFeedbackArgsPreview(args map[string]any, maxLen int) string {
 		args = map[string]any{}
 	}
 
-	argsJSON, err := json.MarshalIndent(args, "", "  ")
-	if err != nil {
-		return utils.Truncate(fmt.Sprintf("%v", args), maxLen)
-	}
-	return utils.Truncate(string(argsJSON), maxLen)
-}
-
-func toolFeedbackArgsPreviewWithOptions(args map[string]any, maxLen int, prettyPrint, disableEscapeHTML bool) string {
-	if args == nil {
-		args = map[string]any{}
-	}
-
-	argsJSON := utils.FormatArgsJSON(args, prettyPrint, disableEscapeHTML)
+	argsJSON := utils.FormatArgsJSON(args, true, false)
 	return utils.Truncate(argsJSON, maxLen)
 }
 

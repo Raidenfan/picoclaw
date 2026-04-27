@@ -4519,8 +4519,7 @@ func TestRun_PicoToolFeedbackSuppressesDuplicateInterimAssistantContent(t *testi
 				MaxTokens:         4096,
 				MaxToolIterations: 10,
 				ToolFeedback: config.ToolFeedbackConfig{
-					Enabled:     true,
-					PrettyPrint: true,
+					Enabled: true,
 				},
 			},
 		},
