@@ -1,0 +1,429 @@
+picoclaw-launcher-tui: open /dev/tty: no such device or address
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: terminal entry not found: term not set
+picoclaw-launcher-tui: open /dev/tty: no such device or address
+picoclaw-launcher-tui: open /dev/tty: no such device or address
+picoclaw-launcher-tui: open /dev/tty: no such device or address
+picoclaw-launcher-tui: open /dev/tty: no such device or address
+picoclaw-launcher-tui: open /dev/tty: no such device or address
+
+[38;2;62;93;185m██████╗ ██╗ ██████╗ ██████╗ [38;2;213;70;70m ██████╗██╗      █████╗ ██╗    ██╗
+[38;2;62;93;185m██╔══██╗██║██╔════╝██╔═══██╗[38;2;213;70;70m██╔════╝██║     ██╔══██╗██║    ██║
+[38;2;62;93;185m██████╔╝██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ███████║██║ █╗ ██║
+[38;2;62;93;185m██╔═══╝ ██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ██╔══██║██║███╗██║
+[38;2;62;93;185m██║     ██║╚██████╗╚██████╔╝[38;2;213;70;70m╚██████╗███████╗██║  ██║╚███╔███╔╝
+[38;2;62;93;185m╚═╝     ╚═╝ ╚═════╝ ╚═════╝ [38;2;213;70;70m ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝
+[0m
+  Dashboard address:
+
+    >> http://localhost:18800 <<
+    >> http://192.168.1.210:18800 <<
+    >> http://172.17.0.1:18800 <<
+    >> http://172.19.0.1:18800 <<
+    >> http://172.18.0.1:18800 <<
+    >> http://172.20.0.1:18800 <<
+
+
+[38;2;62;93;185m██████╗ ██╗ ██████╗ ██████╗ [38;2;213;70;70m ██████╗██╗      █████╗ ██╗    ██╗
+[38;2;62;93;185m██╔══██╗██║██╔════╝██╔═══██╗[38;2;213;70;70m██╔════╝██║     ██╔══██╗██║    ██║
+[38;2;62;93;185m██████╔╝██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ███████║██║ █╗ ██║
+[38;2;62;93;185m██╔═══╝ ██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ██╔══██║██║███╗██║
+[38;2;62;93;185m██║     ██║╚██████╗╚██████╔╝[38;2;213;70;70m╚██████╗███████╗██║  ██║╚███╔███╔╝
+[38;2;62;93;185m╚═╝     ╚═╝ ╚═════╝ ╚═════╝ [38;2;213;70;70m ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝
+[0m
+  Dashboard address:
+
+    >> http://localhost:18800 <<
+    >> http://192.168.1.210:18800 <<
+    >> http://172.17.0.1:18800 <<
+    >> http://172.19.0.1:18800 <<
+    >> http://172.18.0.1:18800 <<
+    >> http://172.20.0.1:18800 <<
+
+
+[38;2;62;93;185m██████╗ ██╗ ██████╗ ██████╗ [38;2;213;70;70m ██████╗██╗      █████╗ ██╗    ██╗
+[38;2;62;93;185m██╔══██╗██║██╔════╝██╔═══██╗[38;2;213;70;70m██╔════╝██║     ██╔══██╗██║    ██║
+[38;2;62;93;185m██████╔╝██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ███████║██║ █╗ ██║
+[38;2;62;93;185m██╔═══╝ ██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ██╔══██║██║███╗██║
+[38;2;62;93;185m██║     ██║╚██████╗╚██████╔╝[38;2;213;70;70m╚██████╗███████╗██║  ██║╚███╔███╔╝
+[38;2;62;93;185m╚═╝     ╚═╝ ╚═════╝ ╚═════╝ [38;2;213;70;70m ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝
+[0m
+  Dashboard address:
+
+    >> http://localhost:18800 <<
+    >> http://192.168.1.210:18800 <<
+    >> http://172.17.0.1:18800 <<
+    >> http://172.19.0.1:18800 <<
+    >> http://172.18.0.1:18800 <<
+    >> http://172.20.0.1:18800 <<
+
+
+[38;2;62;93;185m██████╗ ██╗ ██████╗ ██████╗ [38;2;213;70;70m ██████╗██╗      █████╗ ██╗    ██╗
+[38;2;62;93;185m██╔══██╗██║██╔════╝██╔═══██╗[38;2;213;70;70m██╔════╝██║     ██╔══██╗██║    ██║
+[38;2;62;93;185m██████╔╝██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ███████║██║ █╗ ██║
+[38;2;62;93;185m██╔═══╝ ██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ██╔══██║██║███╗██║
+[38;2;62;93;185m██║     ██║╚██████╗╚██████╔╝[38;2;213;70;70m╚██████╗███████╗██║  ██║╚███╔███╔╝
+[38;2;62;93;185m╚═╝     ╚═╝ ╚═════╝ ╚═════╝ [38;2;213;70;70m ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝
+[0m
+  Dashboard address:
+
+    >> http://localhost:18800 <<
+    >> http://192.168.1.210:18800 <<
+    >> http://172.17.0.1:18800 <<
+    >> http://172.19.0.1:18800 <<
+    >> http://172.18.0.1:18800 <<
+    >> http://172.20.0.1:18800 <<
+
+21:17:09 INF web web/backend/main.go:432 > PicoClaw launcher starting (version 0c0a5825-dirty)...
+21:17:09 INF web web/backend/main.go:433 > PicoClaw Home: /home/dadangdang/.picoclaw
+
+[38;2;62;93;185m██████╗ ██╗ ██████╗ ██████╗ [38;2;213;70;70m ██████╗██╗      █████╗ ██╗    ██╗
+[38;2;62;93;185m██╔══██╗██║██╔════╝██╔═══██╗[38;2;213;70;70m██╔════╝██║     ██╔══██╗██║    ██║
+[38;2;62;93;185m██████╔╝██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ███████║██║ █╗ ██║
+[38;2;62;93;185m██╔═══╝ ██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ██╔══██║██║███╗██║
+[38;2;62;93;185m██║     ██║╚██████╗╚██████╔╝[38;2;213;70;70m╚██████╗███████╗██║  ██║╚███╔███╔╝
+[38;2;62;93;185m╚═╝     ╚═╝ ╚═════╝ ╚═════╝ [38;2;213;70;70m ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝
+[0m
+  Dashboard address:
+
+    >> http://localhost:18800 <<
+    >> http://192.168.1.210:18800 <<
+    >> http://172.17.0.1:18800 <<
+    >> http://172.19.0.1:18800 <<
+    >> http://172.18.0.1:18800 <<
+    >> http://172.20.0.1:18800 <<
+
+21:17:09 INF web web/backend/main.go:639 > Server will listen on http://[::]:18800
+21:17:09 INF web web/backend/main.go:639 > Server will listen on http://0.0.0.0:18800
+21:17:09 INF web web/backend/main.go:643 > Public access enabled at http://192.168.1.210:18800
+21:17:09 INF web web/backend/main.go:666 > Server listening on [::]:18800
+21:17:09 INF web web/backend/main.go:666 > Server listening on 0.0.0.0:18800
+21:17:10 INF gateway web/backend/api/gateway.go:706 > Starting gateway process (/home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw)
+21:17:10 INF gateway web/backend/api/gateway.go:756 > Started picoclaw gateway (PID: 190054) from /home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw
+21:17:10 INF gateway web/backend/api/gateway.go:363 > Gateway auto-started (PID: 190054)
+21:17:10 INF gateway web/backend/api/gateway.go:812 > Gateway pidFile detected (PID: 190054, port: 18790)
+21:20:21 INF backend web/backend/main.go:692 > Shutting down...
+21:20:21 INF gateway web/backend/api/gateway.go:639 > Sent stop signal to gateway (PID: 190054)
+21:20:21 INF gateway web/backend/api/gateway.go:609 > Gateway stopped (PID: 190054)
+21:20:21 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+21:20:21 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+21:20:21 INF web web/backend/main.go:432 > PicoClaw launcher starting (version 0c0a5825-dirty)...
+21:20:21 INF web web/backend/main.go:433 > PicoClaw Home: /home/dadangdang/.picoclaw
+
+[38;2;62;93;185m██████╗ ██╗ ██████╗ ██████╗ [38;2;213;70;70m ██████╗██╗      █████╗ ██╗    ██╗
+[38;2;62;93;185m██╔══██╗██║██╔════╝██╔═══██╗[38;2;213;70;70m██╔════╝██║     ██╔══██╗██║    ██║
+[38;2;62;93;185m██████╔╝██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ███████║██║ █╗ ██║
+[38;2;62;93;185m██╔═══╝ ██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ██╔══██║██║███╗██║
+[38;2;62;93;185m██║     ██║╚██████╗╚██████╔╝[38;2;213;70;70m╚██████╗███████╗██║  ██║╚███╔███╔╝
+[38;2;62;93;185m╚═╝     ╚═╝ ╚═════╝ ╚═════╝ [38;2;213;70;70m ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝
+[0m
+  Dashboard address:
+
+    >> http://localhost:18800 <<
+    >> http://192.168.1.210:18800 <<
+    >> http://172.17.0.1:18800 <<
+    >> http://172.19.0.1:18800 <<
+    >> http://172.18.0.1:18800 <<
+    >> http://172.20.0.1:18800 <<
+
+21:20:21 INF web web/backend/main.go:639 > Server will listen on http://[::]:18800
+21:20:21 INF web web/backend/main.go:639 > Server will listen on http://0.0.0.0:18800
+21:20:21 INF web web/backend/main.go:643 > Public access enabled at http://192.168.1.210:18800
+21:20:21 INF web web/backend/main.go:666 > Server listening on 0.0.0.0:18800
+21:20:21 INF web web/backend/main.go:666 > Server listening on [::]:18800
+21:20:22 INF gateway web/backend/api/gateway.go:706 > Starting gateway process (/home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw)
+21:20:22 INF gateway web/backend/api/gateway.go:756 > Started picoclaw gateway (PID: 190234) from /home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw
+21:20:22 INF gateway web/backend/api/gateway.go:363 > Gateway auto-started (PID: 190234)
+21:20:23 INF gateway web/backend/api/gateway.go:812 > Gateway pidFile detected (PID: 190234, port: 18790)
+21:23:02 INF backend web/backend/main.go:692 > Shutting down...
+21:23:02 INF gateway web/backend/api/gateway.go:639 > Sent stop signal to gateway (PID: 190234)
+21:23:02 INF gateway web/backend/api/gateway.go:609 > Gateway stopped (PID: 190234)
+21:23:02 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+21:23:02 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+21:23:02 INF web web/backend/main.go:432 > PicoClaw launcher starting (version 0c0a5825-dirty)...
+21:23:02 INF web web/backend/main.go:433 > PicoClaw Home: /home/dadangdang/.picoclaw
+
+[38;2;62;93;185m██████╗ ██╗ ██████╗ ██████╗ [38;2;213;70;70m ██████╗██╗      █████╗ ██╗    ██╗
+[38;2;62;93;185m██╔══██╗██║██╔════╝██╔═══██╗[38;2;213;70;70m██╔════╝██║     ██╔══██╗██║    ██║
+[38;2;62;93;185m██████╔╝██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ███████║██║ █╗ ██║
+[38;2;62;93;185m██╔═══╝ ██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ██╔══██║██║███╗██║
+[38;2;62;93;185m██║     ██║╚██████╗╚██████╔╝[38;2;213;70;70m╚██████╗███████╗██║  ██║╚███╔███╔╝
+[38;2;62;93;185m╚═╝     ╚═╝ ╚═════╝ ╚═════╝ [38;2;213;70;70m ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝
+[0m
+  Dashboard address:
+
+    >> http://localhost:18800 <<
+    >> http://192.168.1.210:18800 <<
+    >> http://172.17.0.1:18800 <<
+    >> http://172.19.0.1:18800 <<
+    >> http://172.18.0.1:18800 <<
+    >> http://172.20.0.1:18800 <<
+
+21:23:02 INF web web/backend/main.go:639 > Server will listen on http://[::]:18800
+21:23:02 INF web web/backend/main.go:639 > Server will listen on http://0.0.0.0:18800
+21:23:02 INF web web/backend/main.go:643 > Public access enabled at http://192.168.1.210:18800
+21:23:02 INF web web/backend/main.go:666 > Server listening on [::]:18800
+21:23:02 INF web web/backend/main.go:666 > Server listening on 0.0.0.0:18800
+21:23:03 INF gateway web/backend/api/gateway.go:706 > Starting gateway process (/home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw)
+21:23:03 INF gateway web/backend/api/gateway.go:756 > Started picoclaw gateway (PID: 194041) from /home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw
+21:23:03 INF gateway web/backend/api/gateway.go:363 > Gateway auto-started (PID: 194041)
+21:23:03 INF gateway web/backend/api/gateway.go:812 > Gateway pidFile detected (PID: 194041, port: 18790)
+21:25:14 INF backend web/backend/main.go:692 > Shutting down...
+21:25:14 INF gateway web/backend/api/gateway.go:639 > Sent stop signal to gateway (PID: 194041)
+21:25:14 INF gateway web/backend/api/gateway.go:609 > Gateway stopped (PID: 194041)
+21:25:14 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+21:25:14 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+21:25:14 INF web web/backend/main.go:432 > PicoClaw launcher starting (version 0c0a5825-dirty)...
+21:25:14 INF web web/backend/main.go:433 > PicoClaw Home: /home/dadangdang/.picoclaw
+
+[38;2;62;93;185m██████╗ ██╗ ██████╗ ██████╗ [38;2;213;70;70m ██████╗██╗      █████╗ ██╗    ██╗
+[38;2;62;93;185m██╔══██╗██║██╔════╝██╔═══██╗[38;2;213;70;70m██╔════╝██║     ██╔══██╗██║    ██║
+[38;2;62;93;185m██████╔╝██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ███████║██║ █╗ ██║
+[38;2;62;93;185m██╔═══╝ ██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ██╔══██║██║███╗██║
+[38;2;62;93;185m██║     ██║╚██████╗╚██████╔╝[38;2;213;70;70m╚██████╗███████╗██║  ██║╚███╔███╔╝
+[38;2;62;93;185m╚═╝     ╚═╝ ╚═════╝ ╚═════╝ [38;2;213;70;70m ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝
+[0m
+  Dashboard address:
+
+    >> http://localhost:18800 <<
+    >> http://192.168.1.210:18800 <<
+    >> http://172.17.0.1:18800 <<
+    >> http://172.19.0.1:18800 <<
+    >> http://172.18.0.1:18800 <<
+    >> http://172.20.0.1:18800 <<
+
+21:25:14 INF web web/backend/main.go:639 > Server will listen on http://[::]:18800
+21:25:14 INF web web/backend/main.go:639 > Server will listen on http://0.0.0.0:18800
+21:25:14 INF web web/backend/main.go:643 > Public access enabled at http://192.168.1.210:18800
+21:25:14 INF web web/backend/main.go:666 > Server listening on [::]:18800
+21:25:14 INF web web/backend/main.go:666 > Server listening on 0.0.0.0:18800
+21:25:15 INF gateway web/backend/api/gateway.go:706 > Starting gateway process (/home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw)
+21:25:15 INF gateway web/backend/api/gateway.go:756 > Started picoclaw gateway (PID: 194477) from /home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw
+21:25:15 INF gateway web/backend/api/gateway.go:363 > Gateway auto-started (PID: 194477)
+21:25:16 INF gateway web/backend/api/gateway.go:812 > Gateway pidFile detected (PID: 194477, port: 18790)
+21:28:45 INF backend web/backend/main.go:692 > Shutting down...
+21:28:45 INF gateway web/backend/api/gateway.go:639 > Sent stop signal to gateway (PID: 194477)
+21:28:45 INF gateway web/backend/api/gateway.go:609 > Gateway stopped (PID: 194477)
+21:28:45 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+21:28:45 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+21:28:48 INF web web/backend/main.go:432 > PicoClaw launcher starting (version 0c0a5825-dirty)...
+21:28:48 INF web web/backend/main.go:433 > PicoClaw Home: /home/dadangdang/.picoclaw
+
+[38;2;62;93;185m██████╗ ██╗ ██████╗ ██████╗ [38;2;213;70;70m ██████╗██╗      █████╗ ██╗    ██╗
+[38;2;62;93;185m██╔══██╗██║██╔════╝██╔═══██╗[38;2;213;70;70m██╔════╝██║     ██╔══██╗██║    ██║
+[38;2;62;93;185m██████╔╝██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ███████║██║ █╗ ██║
+[38;2;62;93;185m██╔═══╝ ██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ██╔══██║██║███╗██║
+[38;2;62;93;185m██║     ██║╚██████╗╚██████╔╝[38;2;213;70;70m╚██████╗███████╗██║  ██║╚███╔███╔╝
+[38;2;62;93;185m╚═╝     ╚═╝ ╚═════╝ ╚═════╝ [38;2;213;70;70m ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝
+[0m
+  Dashboard address:
+
+    >> http://localhost:18800 <<
+    >> http://192.168.1.210:18800 <<
+    >> http://172.17.0.1:18800 <<
+    >> http://172.19.0.1:18800 <<
+    >> http://172.18.0.1:18800 <<
+    >> http://172.20.0.1:18800 <<
+
+21:28:48 INF web web/backend/main.go:639 > Server will listen on http://[::]:18800
+21:28:48 INF web web/backend/main.go:639 > Server will listen on http://0.0.0.0:18800
+21:28:48 INF web web/backend/main.go:643 > Public access enabled at http://192.168.1.210:18800
+21:28:48 INF web web/backend/main.go:666 > Server listening on 0.0.0.0:18800
+21:28:48 INF web web/backend/main.go:666 > Server listening on [::]:18800
+21:28:49 INF gateway web/backend/api/gateway.go:706 > Starting gateway process (/home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw)
+21:28:49 INF gateway web/backend/api/gateway.go:756 > Started picoclaw gateway (PID: 197398) from /home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw
+21:28:49 INF gateway web/backend/api/gateway.go:363 > Gateway auto-started (PID: 197398)
+21:28:50 INF gateway web/backend/api/gateway.go:812 > Gateway pidFile detected (PID: 197398, port: 18790)
+21:38:19 INF backend web/backend/main.go:692 > Shutting down...
+21:38:19 INF gateway web/backend/api/gateway.go:639 > Sent stop signal to gateway (PID: 197398)
+21:38:19 INF gateway web/backend/api/gateway.go:609 > Gateway stopped (PID: 197398)
+21:38:19 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+21:38:19 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+21:38:22 INF web web/backend/main.go:432 > PicoClaw launcher starting (version 0c0a5825-dirty)...
+21:38:22 INF web web/backend/main.go:433 > PicoClaw Home: /home/dadangdang/.picoclaw
+
+[38;2;62;93;185m██████╗ ██╗ ██████╗ ██████╗ [38;2;213;70;70m ██████╗██╗      █████╗ ██╗    ██╗
+[38;2;62;93;185m██╔══██╗██║██╔════╝██╔═══██╗[38;2;213;70;70m██╔════╝██║     ██╔══██╗██║    ██║
+[38;2;62;93;185m██████╔╝██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ███████║██║ █╗ ██║
+[38;2;62;93;185m██╔═══╝ ██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ██╔══██║██║███╗██║
+[38;2;62;93;185m██║     ██║╚██████╗╚██████╔╝[38;2;213;70;70m╚██████╗███████╗██║  ██║╚███╔███╔╝
+[38;2;62;93;185m╚═╝     ╚═╝ ╚═════╝ ╚═════╝ [38;2;213;70;70m ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝
+[0m
+  Dashboard address:
+
+    >> http://localhost:18800 <<
+    >> http://192.168.1.210:18800 <<
+    >> http://172.17.0.1:18800 <<
+    >> http://172.19.0.1:18800 <<
+    >> http://172.18.0.1:18800 <<
+    >> http://172.20.0.1:18800 <<
+
+21:38:22 INF web web/backend/main.go:639 > Server will listen on http://[::]:18800
+21:38:22 INF web web/backend/main.go:639 > Server will listen on http://0.0.0.0:18800
+21:38:22 INF web web/backend/main.go:643 > Public access enabled at http://192.168.1.210:18800
+21:38:22 INF web web/backend/main.go:666 > Server listening on 0.0.0.0:18800
+21:38:22 INF web web/backend/main.go:666 > Server listening on [::]:18800
+21:38:23 INF gateway web/backend/api/gateway.go:706 > Starting gateway process (/home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw)
+21:38:23 INF gateway web/backend/api/gateway.go:756 > Started picoclaw gateway (PID: 198871) from /home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw
+21:38:23 INF gateway web/backend/api/gateway.go:363 > Gateway auto-started (PID: 198871)
+21:38:24 INF gateway web/backend/api/gateway.go:812 > Gateway pidFile detected (PID: 198871, port: 18790)
+21:39:07 INF backend web/backend/main.go:692 > Shutting down...
+21:39:07 INF gateway web/backend/api/gateway.go:639 > Sent stop signal to gateway (PID: 198871)
+21:39:07 INF gateway web/backend/api/gateway.go:609 > Gateway stopped (PID: 198871)
+21:39:07 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+21:39:07 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+21:39:10 INF web web/backend/main.go:432 > PicoClaw launcher starting (version 0c0a5825-dirty)...
+21:39:10 INF web web/backend/main.go:433 > PicoClaw Home: /home/dadangdang/.picoclaw
+
+[38;2;62;93;185m██████╗ ██╗ ██████╗ ██████╗ [38;2;213;70;70m ██████╗██╗      █████╗ ██╗    ██╗
+[38;2;62;93;185m██╔══██╗██║██╔════╝██╔═══██╗[38;2;213;70;70m██╔════╝██║     ██╔══██╗██║    ██║
+[38;2;62;93;185m██████╔╝██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ███████║██║ █╗ ██║
+[38;2;62;93;185m██╔═══╝ ██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ██╔══██║██║███╗██║
+[38;2;62;93;185m██║     ██║╚██████╗╚██████╔╝[38;2;213;70;70m╚██████╗███████╗██║  ██║╚███╔███╔╝
+[38;2;62;93;185m╚═╝     ╚═╝ ╚═════╝ ╚═════╝ [38;2;213;70;70m ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝
+[0m
+  Dashboard address:
+
+    >> http://localhost:18800 <<
+    >> http://192.168.1.210:18800 <<
+    >> http://172.17.0.1:18800 <<
+    >> http://172.19.0.1:18800 <<
+    >> http://172.18.0.1:18800 <<
+    >> http://172.20.0.1:18800 <<
+
+21:39:10 INF web web/backend/main.go:639 > Server will listen on http://[::]:18800
+21:39:10 INF web web/backend/main.go:639 > Server will listen on http://0.0.0.0:18800
+21:39:10 INF web web/backend/main.go:643 > Public access enabled at http://192.168.1.210:18800
+21:39:10 INF web web/backend/main.go:666 > Server listening on [::]:18800
+21:39:10 INF web web/backend/main.go:666 > Server listening on 0.0.0.0:18800
+21:39:11 INF gateway web/backend/api/gateway.go:706 > Starting gateway process (/home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw)
+21:39:11 INF gateway web/backend/api/gateway.go:756 > Started picoclaw gateway (PID: 198921) from /home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw
+21:39:11 INF gateway web/backend/api/gateway.go:363 > Gateway auto-started (PID: 198921)
+21:39:12 INF gateway web/backend/api/gateway.go:812 > Gateway pidFile detected (PID: 198921, port: 18790)
+22:02:59 INF backend web/backend/main.go:692 > Shutting down...
+22:02:59 INF gateway web/backend/api/gateway.go:639 > Sent stop signal to gateway (PID: 198921)
+22:02:59 INF gateway web/backend/api/gateway.go:609 > Gateway stopped (PID: 198921)
+22:02:59 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+22:02:59 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+22:03:02 INF web web/backend/main.go:432 > PicoClaw launcher starting (version 0c0a5825-dirty)...
+22:03:02 INF web web/backend/main.go:433 > PicoClaw Home: /home/dadangdang/.picoclaw
+
+[38;2;62;93;185m██████╗ ██╗ ██████╗ ██████╗ [38;2;213;70;70m ██████╗██╗      █████╗ ██╗    ██╗
+[38;2;62;93;185m██╔══██╗██║██╔════╝██╔═══██╗[38;2;213;70;70m██╔════╝██║     ██╔══██╗██║    ██║
+[38;2;62;93;185m██████╔╝██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ███████║██║ █╗ ██║
+[38;2;62;93;185m██╔═══╝ ██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ██╔══██║██║███╗██║
+[38;2;62;93;185m██║     ██║╚██████╗╚██████╔╝[38;2;213;70;70m╚██████╗███████╗██║  ██║╚███╔███╔╝
+[38;2;62;93;185m╚═╝     ╚═╝ ╚═════╝ ╚═════╝ [38;2;213;70;70m ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝
+[0m
+  Dashboard address:
+
+    >> http://localhost:18800 <<
+    >> http://192.168.1.210:18800 <<
+    >> http://172.17.0.1:18800 <<
+    >> http://172.19.0.1:18800 <<
+    >> http://172.18.0.1:18800 <<
+    >> http://172.20.0.1:18800 <<
+
+22:03:02 INF web web/backend/main.go:639 > Server will listen on http://[::]:18800
+22:03:02 INF web web/backend/main.go:639 > Server will listen on http://0.0.0.0:18800
+22:03:02 INF web web/backend/main.go:643 > Public access enabled at http://192.168.1.210:18800
+22:03:02 INF web web/backend/main.go:666 > Server listening on 0.0.0.0:18800
+22:03:02 INF web web/backend/main.go:666 > Server listening on [::]:18800
+22:03:03 INF gateway web/backend/api/gateway.go:706 > Starting gateway process (/home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw)
+22:03:03 INF gateway web/backend/api/gateway.go:756 > Started picoclaw gateway (PID: 211219) from /home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw
+22:03:03 INF gateway web/backend/api/gateway.go:363 > Gateway auto-started (PID: 211219)
+22:03:03 INF gateway web/backend/api/gateway.go:812 > Gateway pidFile detected (PID: 211219, port: 18790)
+22:14:44 INF backend web/backend/main.go:692 > Shutting down...
+22:14:44 INF gateway web/backend/api/gateway.go:639 > Sent stop signal to gateway (PID: 211219)
+22:14:44 INF gateway web/backend/api/gateway.go:609 > Gateway stopped (PID: 211219)
+22:14:44 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+22:14:44 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+22:14:47 INF web web/backend/main.go:432 > PicoClaw launcher starting (version 0c0a5825-dirty)...
+22:14:47 INF web web/backend/main.go:433 > PicoClaw Home: /home/dadangdang/.picoclaw
+
+[38;2;62;93;185m██████╗ ██╗ ██████╗ ██████╗ [38;2;213;70;70m ██████╗██╗      █████╗ ██╗    ██╗
+[38;2;62;93;185m██╔══██╗██║██╔════╝██╔═══██╗[38;2;213;70;70m██╔════╝██║     ██╔══██╗██║    ██║
+[38;2;62;93;185m██████╔╝██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ███████║██║ █╗ ██║
+[38;2;62;93;185m██╔═══╝ ██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ██╔══██║██║███╗██║
+[38;2;62;93;185m██║     ██║╚██████╗╚██████╔╝[38;2;213;70;70m╚██████╗███████╗██║  ██║╚███╔███╔╝
+[38;2;62;93;185m╚═╝     ╚═╝ ╚═════╝ ╚═════╝ [38;2;213;70;70m ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝
+[0m
+  Dashboard address:
+
+    >> http://localhost:18800 <<
+    >> http://192.168.1.210:18800 <<
+    >> http://172.17.0.1:18800 <<
+    >> http://172.19.0.1:18800 <<
+    >> http://172.18.0.1:18800 <<
+    >> http://172.20.0.1:18800 <<
+
+22:14:47 INF web web/backend/main.go:639 > Server will listen on http://[::]:18800
+22:14:47 INF web web/backend/main.go:639 > Server will listen on http://0.0.0.0:18800
+22:14:47 INF web web/backend/main.go:643 > Public access enabled at http://192.168.1.210:18800
+22:14:47 INF web web/backend/main.go:666 > Server listening on 0.0.0.0:18800
+22:14:47 INF web web/backend/main.go:666 > Server listening on [::]:18800
+22:14:48 INF gateway web/backend/api/gateway.go:706 > Starting gateway process (/home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw)
+22:14:48 INF gateway web/backend/api/gateway.go:756 > Started picoclaw gateway (PID: 217683) from /home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw
+22:14:48 INF gateway web/backend/api/gateway.go:363 > Gateway auto-started (PID: 217683)
+22:14:48 INF gateway web/backend/api/gateway.go:812 > Gateway pidFile detected (PID: 217683, port: 18790)
+22:23:56 INF backend web/backend/main.go:692 > Shutting down...
+22:23:56 INF gateway web/backend/api/gateway.go:639 > Sent stop signal to gateway (PID: 217683)
+22:23:56 INF gateway web/backend/api/gateway.go:609 > Gateway stopped (PID: 217683)
+22:23:56 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+22:23:56 INF backend web/backend/app_runtime.go:59 > Server shutdown completed successfully
+22:24:00 INF web web/backend/main.go:432 > PicoClaw launcher starting (version 0c0a5825-dirty)...
+22:24:00 INF web web/backend/main.go:433 > PicoClaw Home: /home/dadangdang/.picoclaw
+
+[38;2;62;93;185m██████╗ ██╗ ██████╗ ██████╗ [38;2;213;70;70m ██████╗██╗      █████╗ ██╗    ██╗
+[38;2;62;93;185m██╔══██╗██║██╔════╝██╔═══██╗[38;2;213;70;70m██╔════╝██║     ██╔══██╗██║    ██║
+[38;2;62;93;185m██████╔╝██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ███████║██║ █╗ ██║
+[38;2;62;93;185m██╔═══╝ ██║██║     ██║   ██║[38;2;213;70;70m██║     ██║     ██╔══██║██║███╗██║
+[38;2;62;93;185m██║     ██║╚██████╗╚██████╔╝[38;2;213;70;70m╚██████╗███████╗██║  ██║╚███╔███╔╝
+[38;2;62;93;185m╚═╝     ╚═╝ ╚═════╝ ╚═════╝ [38;2;213;70;70m ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝
+[0m
+  Dashboard address:
+
+    >> http://localhost:18800 <<
+    >> http://192.168.1.210:18800 <<
+    >> http://172.17.0.1:18800 <<
+    >> http://172.19.0.1:18800 <<
+    >> http://172.18.0.1:18800 <<
+    >> http://172.20.0.1:18800 <<
+
+22:24:00 INF web web/backend/main.go:639 > Server will listen on http://[::]:18800
+22:24:00 INF web web/backend/main.go:639 > Server will listen on http://0.0.0.0:18800
+22:24:00 INF web web/backend/main.go:643 > Public access enabled at http://192.168.1.210:18800
+22:24:00 INF web web/backend/main.go:666 > Server listening on 0.0.0.0:18800
+22:24:00 INF web web/backend/main.go:666 > Server listening on [::]:18800
+22:24:01 INF gateway web/backend/api/gateway.go:706 > Starting gateway process (/home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw)
+22:24:01 INF gateway web/backend/api/gateway.go:756 > Started picoclaw gateway (PID: 218233) from /home/dadangdang/nanoclaw/groups/telegram_picoclaw_dev/picoclaw/build/picoclaw
+22:24:01 INF gateway web/backend/api/gateway.go:363 > Gateway auto-started (PID: 218233)
+22:24:01 INF gateway web/backend/api/gateway.go:812 > Gateway pidFile detected (PID: 218233, port: 18790)
+22:24:53 WRN channels pkg/channels/base.go:131 > SECURITY: Channel allows EVERYONE (allow_from is empty) channel=email hint="Set allow_from to your ID, or use '*' to explicitly acknowledge open access."
+22:24:53 INF email pkg/channels/email/email_log.go:227 > initLogStore called expanded_path=/home/dadangdang/.picoclaw/email-log.json raw_log_file=~/.picoclaw/email-log.json
+22:24:56 WRN channels pkg/channels/base.go:131 > SECURITY: Channel allows EVERYONE (allow_from is empty) channel=email hint="Set allow_from to your ID, or use '*' to explicitly acknowledge open access."
+22:24:56 INF email pkg/channels/email/email_log.go:227 > initLogStore called expanded_path=/home/dadangdang/.picoclaw/email-log.json raw_log_file=~/.picoclaw/email-log.json

@@ -30,6 +30,7 @@ const (
 	ChannelIRC            = "irc"
 	ChannelVK             = "vk"
 	ChannelMaixCam        = "maixcam"
+	ChannelEmail          = "email"
 	ChannelWhatsApp       = "whatsapp"
 	ChannelWhatsAppNative = "whatsapp_native"
 	ChannelTeamsWebHook   = "teams_webhook"
@@ -636,6 +637,7 @@ var channelSettingsFactory = map[string]any{
 	ChannelQQ:             (QQSettings{}),
 	ChannelIRC:            (IRCSettings{}),
 	ChannelVK:             (VKSettings{}),
+	ChannelEmail:          (EmailSettings{}),
 	ChannelMaixCam:        (MaixCamSettings{}),
 	ChannelWhatsApp:       (WhatsAppSettings{}),
 	ChannelWhatsAppNative: (WhatsAppSettings{}),
@@ -691,6 +693,9 @@ func InitChannelList(channels ChannelsConfig) error {
 			// Apply env overrides for channel-specific fields via struct tags
 			if err := env.Parse(target); err != nil {
 				// Non-fatal: some env vars may not apply
+			}
+			if settings, ok := target.(*EmailSettings); ok {
+				ApplyEmailSettingsDefaults(settings)
 			}
 		}
 	}

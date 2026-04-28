@@ -144,6 +144,21 @@ export function GenericForm({
       real_name: t("channels.form.desc.realName"),
       channels: t("channels.form.desc.channels"),
       request_caps: t("channels.form.desc.requestCaps"),
+      from: t("channels.form.desc.from"),
+      smtp_server: t("channels.form.desc.smtpServer"),
+      smtp_port: t("channels.form.desc.smtpPort"),
+      smtp_user: t("channels.form.desc.smtpUser"),
+      smtp_starttls: t("channels.form.desc.smtpStarttls"),
+      imap_server: t("channels.form.desc.imapServer"),
+      imap_port: t("channels.form.desc.imapPort"),
+      imap_user: t("channels.form.desc.imapUser"),
+      mailbox: t("channels.form.desc.mailbox"),
+      poll_interval_secs: t("channels.form.desc.pollIntervalSecs"),
+      whitelist_file: t("channels.form.desc.whitelistFile"),
+      usage_file: t("channels.form.desc.usageFile"),
+      max_attachment_size_bytes: t(
+        "channels.form.desc.maxAttachmentSizeBytes",
+      ),
       max_base64_file_size_mib: t("channels.form.desc.maxBase64FileSizeMiB"),
     }
     return (

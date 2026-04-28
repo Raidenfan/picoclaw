@@ -3,6 +3,7 @@ package toolshared
 import (
 	"context"
 
+	"github.com/sipeed/picoclaw/pkg/bus"
 	"github.com/sipeed/picoclaw/pkg/session"
 )
 
@@ -47,6 +48,7 @@ var (
 	ctxKeyChatID           = &toolCtxKey{"chatID"}
 	ctxKeyMessageID        = &toolCtxKey{"messageID"}
 	ctxKeyReplyToMessageID = &toolCtxKey{"replyToMessageID"}
+	ctxKeyInboundContext   = &toolCtxKey{"inboundContext"}
 	ctxKeyAgentID          = &toolCtxKey{"agentID"}
 	ctxKeySessionKey       = &toolCtxKey{"sessionKey"}
 	ctxKeySessionScope     = &toolCtxKey{"sessionScope"}
@@ -74,6 +76,18 @@ func WithToolInboundContext(
 	ctx = WithToolContext(ctx, channel, chatID)
 	ctx = WithToolMessageContext(ctx, messageID, replyToMessageID)
 	return ctx
+}
+
+// WithToolFullInboundContext returns a child context carrying the full inbound
+// context used to derive outbound replies.
+func WithToolFullInboundContext(ctx context.Context, inbound *bus.InboundContext) context.Context {
+	if inbound == nil {
+		return ctx
+	}
+	cloned := *inbound
+	cloned.ReplyHandles = cloneStringMap(inbound.ReplyHandles)
+	cloned.Raw = cloneStringMap(inbound.Raw)
+	return context.WithValue(ctx, ctxKeyInboundContext, &cloned)
 }
 
 // WithToolSessionContext returns a child context carrying turn-scoped session metadata.
@@ -112,6 +126,18 @@ func ToolReplyToMessageID(ctx context.Context) string {
 	return v
 }
 
+// ToolInboundContext extracts the full inbound context from ctx, or nil if unset.
+func ToolInboundContext(ctx context.Context) *bus.InboundContext {
+	inbound, _ := ctx.Value(ctxKeyInboundContext).(*bus.InboundContext)
+	if inbound == nil {
+		return nil
+	}
+	cloned := *inbound
+	cloned.ReplyHandles = cloneStringMap(inbound.ReplyHandles)
+	cloned.Raw = cloneStringMap(inbound.Raw)
+	return &cloned
+}
+
 // ToolAgentID extracts the active turn's agent ID from ctx, or "" if unset.
 func ToolAgentID(ctx context.Context) string {
 	v, _ := ctx.Value(ctxKeyAgentID).(string)
@@ -128,6 +154,17 @@ func ToolSessionKey(ctx context.Context) string {
 func ToolSessionScope(ctx context.Context) *session.SessionScope {
 	scope, _ := ctx.Value(ctxKeySessionScope).(*session.SessionScope)
 	return session.CloneScope(scope)
+}
+
+func cloneStringMap(src map[string]string) map[string]string {
+	if len(src) == 0 {
+		return nil
+	}
+	dst := make(map[string]string, len(src))
+	for key, value := range src {
+		dst[key] = value
+	}
+	return dst
 }
 
 // AsyncCallback is a function type that async tools use to notify completion.

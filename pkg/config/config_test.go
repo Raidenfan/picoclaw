@@ -525,6 +525,52 @@ func TestDefaultConfig_Channels(t *testing.T) {
 	}
 }
 
+func TestLoadConfigAppliesEmailLogDefaultsWhenOmitted(t *testing.T) {
+	configPath := filepath.Join(t.TempDir(), "config.json")
+	data := []byte(`{
+		"version": 3,
+		"channel_list": {
+			"email": {
+				"enabled": true,
+				"type": "email",
+				"settings": {
+					"from": "bot@example.com",
+					"smtp_server": "smtp.example.com"
+				}
+			}
+		}
+	}`)
+	if err := os.WriteFile(configPath, data, 0o600); err != nil {
+		t.Fatalf("WriteFile() error = %v", err)
+	}
+
+	cfg, err := LoadConfig(configPath)
+	if err != nil {
+		t.Fatalf("LoadConfig() error = %v", err)
+	}
+	bc := cfg.Channels.Get(ChannelEmail)
+	if bc == nil {
+		t.Fatal("email channel missing")
+	}
+	decoded, err := bc.GetDecoded()
+	if err != nil {
+		t.Fatalf("GetDecoded() error = %v", err)
+	}
+	settings, ok := decoded.(*EmailSettings)
+	if !ok {
+		t.Fatalf("decoded settings type = %T, want *EmailSettings", decoded)
+	}
+	if settings.LogFile != DefaultEmailLogFile {
+		t.Fatalf("LogFile = %q, want %q", settings.LogFile, DefaultEmailLogFile)
+	}
+	if settings.LogMaxBodyBytes != DefaultEmailLogMaxBodyBytes {
+		t.Fatalf("LogMaxBodyBytes = %d, want %d", settings.LogMaxBodyBytes, DefaultEmailLogMaxBodyBytes)
+	}
+	if settings.LogMaxEntries != DefaultEmailLogMaxEntries {
+		t.Fatalf("LogMaxEntries = %d, want %d", settings.LogMaxEntries, DefaultEmailLogMaxEntries)
+	}
+}
+
 func TestValidateSingletonChannels_RejectsMultipleInstances(t *testing.T) {
 	channels := ChannelsConfig{
 		"pico1": &Channel{Enabled: true, Type: ChannelPico},

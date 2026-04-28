@@ -2458,6 +2458,60 @@ func testInboundMessage(msg bus.InboundMessage) bus.InboundMessage {
 	return bus.NormalizeInboundMessage(msg)
 }
 
+func TestRunTurnWithSteeringPreservesInboundContextOnOutbound(t *testing.T) {
+	tmpDir := t.TempDir()
+	cfg := &config.Config{
+		Agents: config.AgentsConfig{
+			Defaults: config.AgentDefaults{
+				Workspace:         tmpDir,
+				ModelName:         "test-model",
+				MaxTokens:         4096,
+				MaxToolIterations: 10,
+			},
+		},
+		Session: config.SessionConfig{Dimensions: []string{"chat"}},
+	}
+
+	msgBus := bus.NewMessageBus()
+	al := NewAgentLoop(cfg, msgBus, &simpleMockProvider{response: "email reply"})
+	inbound := testInboundMessage(bus.InboundMessage{
+		Context: bus.InboundContext{
+			Channel:          "email",
+			ChatID:           "alice@example.com",
+			ChatType:         "direct",
+			SenderID:         "alice@example.com",
+			MessageID:        "<msg-1@example.com>",
+			ReplyToMessageID: "<msg-1@example.com>",
+			Raw: map[string]string{
+				"email_subject":       "Question",
+				"email_message_id":    "<msg-1@example.com>",
+				"email_reply_allowed": "true",
+			},
+		},
+		Content: "hello",
+	})
+
+	al.runTurnWithSteering(context.Background(), inbound)
+
+	select {
+	case outbound := <-msgBus.OutboundChan():
+		if outbound.Context.Channel != "email" || outbound.Context.ChatID != "alice@example.com" {
+			t.Fatalf("outbound context = %+v, want email/alice@example.com", outbound.Context)
+		}
+		if outbound.Context.ReplyToMessageID != "<msg-1@example.com>" {
+			t.Fatalf("ReplyToMessageID = %q, want inbound message id", outbound.Context.ReplyToMessageID)
+		}
+		if outbound.Context.Raw["email_subject"] != "Question" {
+			t.Fatalf("email_subject raw = %q, want Question", outbound.Context.Raw["email_subject"])
+		}
+		if outbound.Content != "email reply" {
+			t.Fatalf("Content = %q, want email reply", outbound.Content)
+		}
+	case <-time.After(responseTimeout):
+		t.Fatal("timed out waiting for outbound response")
+	}
+}
+
 const responseTimeout = 3 * time.Second
 
 func TestProcessMessage_UsesRouteSessionKey(t *testing.T) {

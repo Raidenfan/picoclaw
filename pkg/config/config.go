@@ -500,6 +500,51 @@ func (c *VKSettings) SetToken(token string) {
 	c.Token = *NewSecureString(token)
 }
 
+type EmailSettings struct {
+	From                   string       `json:"from,omitempty"                      yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_FROM"`
+	SMTPServer             string       `json:"smtp_server,omitempty"               yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_SMTP_SERVER"`
+	SMTPPort               int          `json:"smtp_port,omitempty"                 yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_SMTP_PORT"`
+	SMTPUser               string       `json:"smtp_user,omitempty"                 yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_SMTP_USER"`
+	SMTPPassword           SecureString `json:"smtp_password,omitzero,omitempty"    yaml:"smtp_password,omitempty"       env:"PICOCLAW_CHANNELS_EMAIL_SMTP_PASSWORD"`
+	SMTPTLS                *bool        `json:"smtp_tls,omitempty"                  yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_SMTP_TLS"`
+	SMTPStartTLS           bool         `json:"smtp_starttls,omitempty"             yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_SMTP_STARTTLS"`
+	IMAPServer             string       `json:"imap_server,omitempty"               yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_IMAP_SERVER"`
+	IMAPPort               int          `json:"imap_port,omitempty"                 yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_IMAP_PORT"`
+	IMAPUser               string       `json:"imap_user,omitempty"                 yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_IMAP_USER"`
+	IMAPPassword           SecureString `json:"imap_password,omitzero,omitempty"    yaml:"imap_password,omitempty"       env:"PICOCLAW_CHANNELS_EMAIL_IMAP_PASSWORD"`
+	IMAPTLS                *bool        `json:"imap_tls,omitempty"                  yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_IMAP_TLS"`
+	TLS                    bool         `json:"tls,omitempty"                       yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_TLS"`
+	PollIntervalSecs       int          `json:"poll_interval_secs,omitempty"        yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_POLL_INTERVAL_SECS"`
+	EnableQuota            bool         `json:"enable_quota,omitempty"              yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_ENABLE_QUOTA"`
+	QuotaFile              string       `json:"quota_file,omitempty"                yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_QUOTA_FILE"`
+	Mailbox                string       `json:"mailbox,omitempty"                   yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_MAILBOX"`
+	MaxAttachmentSizeBytes int64        `json:"max_attachment_size_bytes,omitempty"  yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_MAX_ATTACHMENT_SIZE_BYTES"`
+	LogFile                string       `json:"log_file,omitempty"                  yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_LOG_FILE"`
+	LogMaxBodyBytes        int          `json:"log_max_body_bytes,omitempty"        yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_LOG_MAX_BODY_BYTES"`
+	LogMaxEntries          int          `json:"log_max_entries,omitempty"           yaml:"-"                             env:"PICOCLAW_CHANNELS_EMAIL_LOG_MAX_ENTRIES"`
+}
+
+const (
+	DefaultEmailLogFile         = "~/.picoclaw/email-log.json"
+	DefaultEmailLogMaxBodyBytes = 16384
+	DefaultEmailLogMaxEntries   = 5000
+)
+
+func ApplyEmailSettingsDefaults(settings *EmailSettings) {
+	if settings == nil {
+		return
+	}
+	if strings.TrimSpace(settings.LogFile) == "" {
+		settings.LogFile = DefaultEmailLogFile
+	}
+	if settings.LogMaxBodyBytes <= 0 {
+		settings.LogMaxBodyBytes = DefaultEmailLogMaxBodyBytes
+	}
+	if settings.LogMaxEntries <= 0 {
+		settings.LogMaxEntries = DefaultEmailLogMaxEntries
+	}
+}
+
 // TeamsWebhookSettings configures the output-only Microsoft Teams webhook channel.
 // Multiple webhook targets can be configured and selected via ChatID at send time.
 type TeamsWebhookSettings struct {

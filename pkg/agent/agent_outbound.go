@@ -18,10 +18,26 @@ import (
 )
 
 func (al *AgentLoop) maybePublishError(ctx context.Context, channel, chatID, sessionKey string, err error) bool {
+	return al.maybePublishErrorWithContext(ctx, nil, channel, chatID, sessionKey, err)
+}
+
+func (al *AgentLoop) maybePublishErrorWithContext(
+	ctx context.Context,
+	inbound *bus.InboundContext,
+	channel, chatID, sessionKey string,
+	err error,
+) bool {
 	if errors.Is(err, context.Canceled) {
 		return false
 	}
-	al.PublishResponseIfNeeded(ctx, channel, chatID, sessionKey, fmt.Sprintf("Error processing message: %v", err))
+	al.publishResponseWithContextIfNeeded(
+		ctx,
+		inbound,
+		channel,
+		chatID,
+		sessionKey,
+		fmt.Sprintf("Error processing message: %v", err),
+	)
 	return true
 }
 
@@ -31,16 +47,34 @@ func (al *AgentLoop) publishResponseOrError(
 	response string,
 	err error,
 ) {
+	al.publishResponseOrErrorWithContext(ctx, nil, channel, chatID, sessionKey, response, err)
+}
+
+func (al *AgentLoop) publishResponseOrErrorWithContext(
+	ctx context.Context,
+	inbound *bus.InboundContext,
+	channel, chatID, sessionKey string,
+	response string,
+	err error,
+) {
 	if err != nil {
-		if !al.maybePublishError(ctx, channel, chatID, sessionKey, err) {
+		if !al.maybePublishErrorWithContext(ctx, inbound, channel, chatID, sessionKey, err) {
 			return
 		}
 		response = ""
 	}
-	al.PublishResponseIfNeeded(ctx, channel, chatID, sessionKey, response)
+	al.publishResponseWithContextIfNeeded(ctx, inbound, channel, chatID, sessionKey, response)
 }
 
 func (al *AgentLoop) PublishResponseIfNeeded(ctx context.Context, channel, chatID, sessionKey, response string) {
+	al.publishResponseWithContextIfNeeded(ctx, nil, channel, chatID, sessionKey, response)
+}
+
+func (al *AgentLoop) publishResponseWithContextIfNeeded(
+	ctx context.Context,
+	inbound *bus.InboundContext,
+	channel, chatID, sessionKey, response string,
+) {
 	if response == "" {
 		return
 	}
@@ -65,7 +99,7 @@ func (al *AgentLoop) PublishResponseIfNeeded(ctx context.Context, channel, chatI
 	}
 
 	msg := bus.OutboundMessage{
-		Context: bus.NewOutboundContext(channel, chatID, ""),
+		Context: outboundContextFromInbound(inbound, channel, chatID, ""),
 		Content: response,
 	}
 	if sessionKey != "" {

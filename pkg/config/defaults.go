@@ -503,6 +503,18 @@ func defaultChannels() ChannelsConfig {
 		"qq": map[string]any{
 			"settings": map[string]any{"max_message_length": 2000},
 		},
+		"email": map[string]any{
+			"settings": map[string]any{
+				"smtp_tls":                  false,
+				"smtp_starttls":             true,
+				"imap_tls":                  true,
+				"poll_interval_secs":        30,
+				"max_attachment_size_bytes": 10 * 1024 * 1024,
+				"log_file":                  DefaultEmailLogFile,
+				"log_max_body_bytes":        DefaultEmailLogMaxBodyBytes,
+				"log_max_entries":           DefaultEmailLogMaxEntries,
+			},
+		},
 		"dingtalk": map[string]any{},
 		"slack":    map[string]any{},
 		"matrix": map[string]any{

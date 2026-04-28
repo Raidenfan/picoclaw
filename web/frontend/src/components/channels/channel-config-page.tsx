@@ -22,6 +22,7 @@ import {
 } from "@/components/channels/channel-config-fields"
 import { getChannelDisplayName } from "@/components/channels/channel-display-name"
 import { DiscordForm } from "@/components/channels/channel-forms/discord-form"
+import { EmailForm } from "@/components/channels/channel-forms/email-form"
 import { FeishuForm } from "@/components/channels/channel-forms/feishu-form"
 import { GenericForm } from "@/components/channels/channel-forms/generic-form"
 import { SlackForm } from "@/components/channels/channel-forms/slack-form"
@@ -105,6 +106,22 @@ function normalizeConfig(
   rawConfig: ChannelConfig,
 ): ChannelConfig {
   const config = { ...rawConfig }
+  if (channel.name === "email") {
+    const legacyTLS = config.tls
+    if (
+      typeof config.smtp_tls !== "boolean" &&
+      typeof legacyTLS === "boolean"
+    ) {
+      config.smtp_tls = legacyTLS
+    }
+    if (
+      typeof config.imap_tls !== "boolean" &&
+      typeof legacyTLS === "boolean"
+    ) {
+      config.imap_tls = legacyTLS
+    }
+    delete config.tls
+  }
   if (channel.name === "whatsapp_native") {
     config.use_native = true
   }
@@ -125,6 +142,7 @@ function buildSavePayload(
   for (const [key, value] of Object.entries(editConfig)) {
     if (key.startsWith("_")) continue
     if (key === "enabled") continue
+    if (channel.name === "email" && key === "tls") continue
     if (CHANNEL_COMMON_CONFIG_KEYS.has(key)) {
       if (key === "allow_from") {
         payload[key] = serializeStringArrayForSubmit(
@@ -215,6 +233,8 @@ function isConfigured(
       )
     case "irc":
       return hasValue("server")
+    case "email":
+      return hasValue("smtp_server") || hasValue("imap_server")
     default:
       return false
   }
@@ -250,6 +270,8 @@ function getRequiredFieldKeys(channelName: string): string[] {
       return ["homeserver", "user_id", "access_token"]
     case "irc":
       return ["server"]
+    case "email":
+      return []
     default:
       return []
   }
@@ -277,6 +299,7 @@ const CHANNELS_WITHOUT_DOCS = new Set([
   "wecom",
   "matrix",
   "irc",
+  "email",
   "whatsapp",
   "whatsapp_native",
 ])
@@ -651,6 +674,15 @@ export function ChannelConfigPage({ channelName }: ChannelConfigPageProps) {
               arrayFieldResetVersion={arrayFieldResetVersion}
             />
           </>
+        )
+      case "email":
+        return (
+          <EmailForm
+            config={editConfig}
+            onChange={handleChange}
+            configuredSecrets={configuredSecrets}
+            fieldErrors={fieldErrors}
+          />
         )
       default:
         return (

@@ -13,6 +13,8 @@ import { Route as ModelsRouteImport } from './routes/models'
 import { Route as LogsRouteImport } from './routes/logs'
 import { Route as LauncherSetupRouteImport } from './routes/launcher-setup'
 import { Route as LauncherLoginRouteImport } from './routes/launcher-login'
+import { Route as EmailQuotasRouteImport } from './routes/email-quotas'
+import { Route as EmailLogRouteImport } from './routes/email-log'
 import { Route as CredentialsRouteImport } from './routes/credentials'
 import { Route as ConfigRouteImport } from './routes/config'
 import { Route as AgentRouteImport } from './routes/agent'
@@ -42,6 +44,16 @@ const LauncherSetupRoute = LauncherSetupRouteImport.update({
 const LauncherLoginRoute = LauncherLoginRouteImport.update({
   id: '/launcher-login',
   path: '/launcher-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmailQuotasRoute = EmailQuotasRouteImport.update({
+  id: '/email-quotas',
+  path: '/email-quotas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmailLogRoute = EmailLogRouteImport.update({
+  id: '/email-log',
+  path: '/email-log',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CredentialsRoute = CredentialsRouteImport.update({
@@ -101,6 +113,8 @@ export interface FileRoutesByFullPath {
   '/agent': typeof AgentRouteWithChildren
   '/config': typeof ConfigRouteWithChildren
   '/credentials': typeof CredentialsRoute
+  '/email-log': typeof EmailLogRoute
+  '/email-quotas': typeof EmailQuotasRoute
   '/launcher-login': typeof LauncherLoginRoute
   '/launcher-setup': typeof LauncherSetupRoute
   '/logs': typeof LogsRoute
@@ -117,6 +131,8 @@ export interface FileRoutesByTo {
   '/agent': typeof AgentRouteWithChildren
   '/config': typeof ConfigRouteWithChildren
   '/credentials': typeof CredentialsRoute
+  '/email-log': typeof EmailLogRoute
+  '/email-quotas': typeof EmailQuotasRoute
   '/launcher-login': typeof LauncherLoginRoute
   '/launcher-setup': typeof LauncherSetupRoute
   '/logs': typeof LogsRoute
@@ -134,6 +150,8 @@ export interface FileRoutesById {
   '/agent': typeof AgentRouteWithChildren
   '/config': typeof ConfigRouteWithChildren
   '/credentials': typeof CredentialsRoute
+  '/email-log': typeof EmailLogRoute
+  '/email-quotas': typeof EmailQuotasRoute
   '/launcher-login': typeof LauncherLoginRoute
   '/launcher-setup': typeof LauncherSetupRoute
   '/logs': typeof LogsRoute
@@ -152,6 +170,8 @@ export interface FileRouteTypes {
     | '/agent'
     | '/config'
     | '/credentials'
+    | '/email-log'
+    | '/email-quotas'
     | '/launcher-login'
     | '/launcher-setup'
     | '/logs'
@@ -168,6 +188,8 @@ export interface FileRouteTypes {
     | '/agent'
     | '/config'
     | '/credentials'
+    | '/email-log'
+    | '/email-quotas'
     | '/launcher-login'
     | '/launcher-setup'
     | '/logs'
@@ -184,6 +206,8 @@ export interface FileRouteTypes {
     | '/agent'
     | '/config'
     | '/credentials'
+    | '/email-log'
+    | '/email-quotas'
     | '/launcher-login'
     | '/launcher-setup'
     | '/logs'
@@ -201,6 +225,8 @@ export interface RootRouteChildren {
   AgentRoute: typeof AgentRouteWithChildren
   ConfigRoute: typeof ConfigRouteWithChildren
   CredentialsRoute: typeof CredentialsRoute
+  EmailLogRoute: typeof EmailLogRoute
+  EmailQuotasRoute: typeof EmailQuotasRoute
   LauncherLoginRoute: typeof LauncherLoginRoute
   LauncherSetupRoute: typeof LauncherSetupRoute
   LogsRoute: typeof LogsRoute
@@ -235,6 +261,20 @@ declare module '@tanstack/react-router' {
       path: '/launcher-login'
       fullPath: '/launcher-login'
       preLoaderRoute: typeof LauncherLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/email-quotas': {
+      id: '/email-quotas'
+      path: '/email-quotas'
+      fullPath: '/email-quotas'
+      preLoaderRoute: typeof EmailQuotasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/email-log': {
+      id: '/email-log'
+      path: '/email-log'
+      fullPath: '/email-log'
+      preLoaderRoute: typeof EmailLogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/credentials': {
@@ -353,6 +393,8 @@ const rootRouteChildren: RootRouteChildren = {
   AgentRoute: AgentRouteWithChildren,
   ConfigRoute: ConfigRouteWithChildren,
   CredentialsRoute: CredentialsRoute,
+  EmailLogRoute: EmailLogRoute,
+  EmailQuotasRoute: EmailQuotasRoute,
   LauncherLoginRoute: LauncherLoginRoute,
   LauncherSetupRoute: LauncherSetupRoute,
   LogsRoute: LogsRoute,
