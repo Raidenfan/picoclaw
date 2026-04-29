@@ -59,6 +59,7 @@ type emailAttachment struct {
 	ContentType string
 	SizeBytes   int64
 	TempPath    string
+	LocalPath   string
 	Ref         string
 	Skipped     bool
 	SkipReason  string
@@ -377,11 +378,10 @@ func (c *EmailChannel) processFetchedEmail(msg *imap.Message, section *imap.Body
 		return
 	}
 
-	c.logInboundEmail(parsed, "")
-
 	policy := c.evaluateReplyPolicy(parsed.FromEmail)
 	parsed.ReplyPolicy = policy
 	parsed.Attachments = c.storeAttachments(parsed.Attachments, parsed.FromEmail, parsed.MessageID)
+	c.logInboundEmail(parsed, "")
 	content, rawFields := c.composeInboundContent(parsed)
 	if rawFields == nil {
 		rawFields = map[string]string{}
@@ -664,8 +664,9 @@ func (c *EmailChannel) storeAttachments(attachments []emailAttachment, senderEma
 	scope := channels.BuildMediaScope(c.Name(), senderEmail, messageID)
 	out := make([]emailAttachment, 0, len(attachments))
 	for _, att := range attachments {
-		ref, skipped, reason := c.storeAttachment(scope, &att)
+		ref, localPath, skipped, reason := c.storeAttachment(scope, &att)
 		att.Ref = ref
+		att.LocalPath = localPath
 		att.Skipped = skipped
 		att.SkipReason = reason
 		att.TempPath = ""
@@ -674,17 +675,17 @@ func (c *EmailChannel) storeAttachments(attachments []emailAttachment, senderEma
 	return out
 }
 
-func (c *EmailChannel) storeAttachment(scope string, attachment *emailAttachment) (ref string, skipped bool, reason string) {
+func (c *EmailChannel) storeAttachment(scope string, attachment *emailAttachment) (ref string, localPath string, skipped bool, reason string) {
 	if attachment == nil {
-		return "", true, "attachment is nil"
+		return "", "", true, "attachment is nil"
 	}
 	if attachment.Skipped {
-		return "", true, attachment.SkipReason
+		return "", "", true, attachment.SkipReason
 	}
 
-	localPath := attachment.TempPath
+	localPath = attachment.TempPath
 	if localPath == "" {
-		return "", true, "attachment data unavailable"
+		return "", "", true, "attachment data unavailable"
 	}
 
 	removeOnFailure := true
@@ -696,20 +697,21 @@ func (c *EmailChannel) storeAttachment(scope string, attachment *emailAttachment
 
 	store := c.GetMediaStore()
 	if store == nil {
-		return "", true, "media store unavailable"
+		return "", "", true, "media store unavailable"
 	}
 
 	var err error
 	ref, err = store.Store(localPath, media.MediaMeta{
-		Filename:    attachment.Filename,
-		ContentType: attachment.ContentType,
-		Source:      "email",
+		Filename:      attachment.Filename,
+		ContentType:   attachment.ContentType,
+		Source:        "email",
+		CleanupPolicy: media.CleanupPolicyForgetOnly,
 	}, scope)
 	if err != nil {
-		return "", true, err.Error()
+		return "", "", true, err.Error()
 	}
 	removeOnFailure = false
-	return ref, false, ""
+	return ref, localPath, false, ""
 }
 
 func (c *EmailChannel) composeInboundContent(email *parsedEmail) (string, map[string]string) {
@@ -1063,11 +1065,7 @@ func (c *EmailChannel) SendMedia(ctx context.Context, msg bus.OutboundMediaMessa
 
 	var atts []EmailLogAttachment
 	for _, p := range msg.Parts {
-		atts = append(atts, EmailLogAttachment{
-			Filename:    p.Filename,
-			ContentType: p.ContentType,
-			SizeBytes:   0,
-		})
+		atts = append(atts, emailLogAttachmentForMediaPart(store, p))
 	}
 	c.logOutboundEmail(to, subject, "", atts)
 	c.decrementUsageIfNeeded(to)
@@ -1077,6 +1075,32 @@ func (c *EmailChannel) SendMedia(ctx context.Context, msg bus.OutboundMediaMessa
 		"attachments": len(msg.Parts),
 	})
 	return nil, nil
+}
+
+func emailLogAttachmentForMediaPart(store media.MediaStore, part bus.MediaPart) EmailLogAttachment {
+	attachment := EmailLogAttachment{
+		Filename:    part.Filename,
+		ContentType: part.ContentType,
+	}
+	if store == nil || strings.TrimSpace(part.Ref) == "" {
+		return attachment
+	}
+
+	localPath, meta, err := store.ResolveWithMeta(part.Ref)
+	if err != nil {
+		return attachment
+	}
+	if attachment.Filename == "" {
+		attachment.Filename = meta.Filename
+	}
+	if attachment.ContentType == "" {
+		attachment.ContentType = meta.ContentType
+	}
+	attachment.Path = localPath
+	if info, err := os.Stat(localPath); err == nil {
+		attachment.SizeBytes = info.Size()
+	}
+	return attachment
 }
 
 func (c *EmailChannel) replySubjectMedia(msg bus.OutboundMediaMessage) string {

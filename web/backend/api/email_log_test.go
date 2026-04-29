@@ -89,3 +89,80 @@ func TestHandleListEmailLogReturnsNewestEntriesFirstBeforePagination(t *testing.
 		t.Fatalf("entry ids = %#v, want entry-35, entry-34", resp.Entries)
 	}
 }
+
+func TestHandleListEmailLogIncludesAttachmentPath(t *testing.T) {
+	dir := t.TempDir()
+	logPath := filepath.Join(dir, "email-log.json")
+	configPath := filepath.Join(dir, "config.json")
+	attachmentPath := filepath.Join(dir, "attachment.txt")
+
+	entries := []emailch.EmailLogEntry{
+		{
+			ID:        "entry-attachment",
+			Timestamp: time.Date(2026, 4, 28, 12, 0, 0, 0, time.UTC).Format(time.RFC3339),
+			Direction: emailch.DirectionIn,
+			FromEmail: "sender@example.com",
+			ToEmail:   "bot@example.com",
+			Subject:   "message with attachment",
+			Attachments: []emailch.EmailLogAttachment{
+				{
+					Filename:    "attachment.txt",
+					ContentType: "text/plain",
+					SizeBytes:   12,
+					Path:        attachmentPath,
+				},
+			},
+		},
+	}
+	logData, err := json.Marshal(entries)
+	if err != nil {
+		t.Fatalf("Marshal() error = %v", err)
+	}
+	if err := os.WriteFile(logPath, logData, 0o600); err != nil {
+		t.Fatalf("WriteFile(log) error = %v", err)
+	}
+
+	configData := []byte(fmt.Sprintf(`{
+		"version": 3,
+		"channel_list": {
+			"email": {
+				"enabled": true,
+				"type": "email",
+				"settings": {
+					"log_file": %q
+				}
+			}
+		}
+	}`, logPath))
+	if err := os.WriteFile(configPath, configData, 0o600); err != nil {
+		t.Fatalf("WriteFile(config) error = %v", err)
+	}
+
+	h := NewHandler(configPath)
+	mux := http.NewServeMux()
+	h.RegisterRoutes(mux)
+
+	req := httptest.NewRequest(http.MethodGet, "/api/channels/email/log", nil)
+	rec := httptest.NewRecorder()
+	mux.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want %d, body=%s", rec.Code, http.StatusOK, rec.Body.String())
+	}
+	var resp struct {
+		Entries []struct {
+			Attachments []struct {
+				Path string `json:"path"`
+			} `json:"attachments"`
+		} `json:"entries"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("Unmarshal() error = %v", err)
+	}
+	if len(resp.Entries) != 1 || len(resp.Entries[0].Attachments) != 1 {
+		t.Fatalf("response entries = %#v, want one attachment", resp.Entries)
+	}
+	if got := resp.Entries[0].Attachments[0].Path; got != attachmentPath {
+		t.Fatalf("attachment path = %q, want %q", got, attachmentPath)
+	}
+}

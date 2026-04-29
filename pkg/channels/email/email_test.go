@@ -12,6 +12,7 @@ import (
 
 	"github.com/sipeed/picoclaw/pkg/bus"
 	"github.com/sipeed/picoclaw/pkg/config"
+	"github.com/sipeed/picoclaw/pkg/media"
 )
 
 func TestPrefixReplySubject(t *testing.T) {
@@ -62,6 +63,132 @@ func TestComposeInboundContent(t *testing.T) {
 	}
 	if raw["email_remaining_uses"] != "2" {
 		t.Fatalf("raw email_remaining_uses = %q", raw["email_remaining_uses"])
+	}
+}
+
+func TestInboundEmailLogUsesStoredAttachmentPath(t *testing.T) {
+	ch := newTestEmailChannel(t)
+	ch.SetMediaStore(media.NewFileMediaStore())
+	logPath := filepath.Join(t.TempDir(), "email-log.json")
+	ch.logStore = newEmailLogStore(logPath, config.DefaultEmailLogMaxBodyBytes, 10)
+
+	if err := os.MkdirAll(media.TempDir(), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	tmp, err := os.CreateTemp(media.TempDir(), "email-log-test-*.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+	tmpPath := tmp.Name()
+	t.Cleanup(func() { _ = os.Remove(tmpPath) })
+	if _, err := tmp.WriteString("attachment body"); err != nil {
+		t.Fatal(err)
+	}
+	if err := tmp.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	parsed := &parsedEmail{
+		FromEmail: "alice@example.com",
+		Subject:   "with attachment",
+		MessageID: "<msg-attachment@example.com>",
+		Body:      "see attached",
+		Attachments: []emailAttachment{
+			{
+				Filename:    "notes.txt",
+				ContentType: "text/plain",
+				SizeBytes:   int64(len("attachment body")),
+				TempPath:    tmpPath,
+			},
+		},
+	}
+
+	parsed.Attachments = ch.storeAttachments(parsed.Attachments, parsed.FromEmail, parsed.MessageID)
+	ch.logInboundEmail(parsed, "")
+
+	entries := readEmailLogEntriesForTest(t, logPath)
+	if len(entries) != 1 {
+		t.Fatalf("entries len = %d, want 1", len(entries))
+	}
+	if got := entries[0].Attachments[0].Path; got != tmpPath {
+		t.Fatalf("attachment path = %q, want %q", got, tmpPath)
+	}
+	if _, err := os.Stat(entries[0].Attachments[0].Path); err != nil {
+		t.Fatalf("logged attachment path should exist: %v", err)
+	}
+	if parsed.Attachments[0].Ref == "" {
+		t.Fatal("stored attachment ref is empty")
+	}
+	if parsed.Attachments[0].TempPath != "" {
+		t.Fatalf("stored attachment TempPath = %q, want empty", parsed.Attachments[0].TempPath)
+	}
+}
+
+func TestRejectedInboundEmailLogOmitsTemporaryAttachmentPath(t *testing.T) {
+	ch := newTestEmailChannel(t)
+	logPath := filepath.Join(t.TempDir(), "email-log.json")
+	ch.logStore = newEmailLogStore(logPath, config.DefaultEmailLogMaxBodyBytes, 10)
+
+	tmp, err := os.CreateTemp(t.TempDir(), "email-log-denied-*.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+	tmpPath := tmp.Name()
+	if err := tmp.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	parsed := &parsedEmail{
+		FromEmail: "blocked@example.com",
+		Subject:   "blocked",
+		Attachments: []emailAttachment{
+			{Filename: "blocked.txt", ContentType: "text/plain", TempPath: tmpPath},
+		},
+	}
+
+	ch.logInboundEmail(parsed, "用户限额不足，不能处理。")
+	ch.cleanupTemporaryAttachments(parsed.Attachments)
+
+	entries := readEmailLogEntriesForTest(t, logPath)
+	if len(entries) != 1 {
+		t.Fatalf("entries len = %d, want 1", len(entries))
+	}
+	if got := entries[0].Attachments[0].Path; got != "" {
+		t.Fatalf("rejected attachment path = %q, want empty", got)
+	}
+	if _, err := os.Stat(tmpPath); !os.IsNotExist(err) {
+		t.Fatalf("temporary attachment should be removed, stat err=%v", err)
+	}
+}
+
+func TestEmailLogAttachmentForMediaPartUsesMediaStorePath(t *testing.T) {
+	store := media.NewFileMediaStore()
+	localPath := filepath.Join(t.TempDir(), "report.txt")
+	const content = "report body"
+	if err := os.WriteFile(localPath, []byte(content), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	ref, err := store.Store(localPath, media.MediaMeta{
+		Filename:    "report.txt",
+		ContentType: "text/plain",
+		Source:      "test",
+	}, "scope")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	attachment := emailLogAttachmentForMediaPart(store, bus.MediaPart{Ref: ref})
+	if attachment.Path != localPath {
+		t.Fatalf("path = %q, want %q", attachment.Path, localPath)
+	}
+	if attachment.SizeBytes != int64(len(content)) {
+		t.Fatalf("size = %d, want %d", attachment.SizeBytes, len(content))
+	}
+	if attachment.Filename != "report.txt" {
+		t.Fatalf("filename = %q, want report.txt", attachment.Filename)
+	}
+	if attachment.ContentType != "text/plain" {
+		t.Fatalf("content type = %q, want text/plain", attachment.ContentType)
 	}
 }
 
@@ -315,4 +442,17 @@ func newTestEmailChannel(t *testing.T) *EmailChannel {
 	}
 	ch.SetRunning(true)
 	return ch
+}
+
+func readEmailLogEntriesForTest(t *testing.T, path string) []EmailLogEntry {
+	t.Helper()
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var entries []EmailLogEntry
+	if err := json.Unmarshal(data, &entries); err != nil {
+		t.Fatal(err)
+	}
+	return entries
 }

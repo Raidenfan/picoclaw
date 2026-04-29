@@ -216,7 +216,7 @@ func mapToLogAttachments(attachments []emailAttachment) []EmailLogAttachment {
 			Filename:    a.Filename,
 			ContentType: a.ContentType,
 			SizeBytes:   a.SizeBytes,
-			Path:        a.TempPath,
+			Path:        a.LocalPath,
 		})
 	}
 	return result

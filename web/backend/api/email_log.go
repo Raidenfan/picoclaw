@@ -42,6 +42,7 @@ type emailLogSummaryAttachment struct {
 	Filename    string `json:"filename"`
 	ContentType string `json:"content_type"`
 	SizeBytes   int64  `json:"size_bytes"`
+	Path        string `json:"path,omitempty"`
 }
 
 func (h *Handler) handleListEmailLog(w http.ResponseWriter, r *http.Request) {
@@ -247,6 +248,7 @@ func entryToSummary(e emailch.EmailLogEntry) emailLogSummary {
 				Filename:    a.Filename,
 				ContentType: a.ContentType,
 				SizeBytes:   a.SizeBytes,
+				Path:        a.Path,
 			})
 		}
 	}
