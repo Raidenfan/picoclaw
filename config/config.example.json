@@ -27,6 +27,9 @@
         "default_token_budget": 0,
         "concurrency_timeout_sec": 0
       },
+      "split_on_marker": false,
+      "max_llm_retries": 2,
+      "llm_retry_backoff_secs": 2,
       "tool_feedback": {
         "enabled": false,
         "max_args_length": 300,
@@ -35,6 +38,8 @@
       "split_on_marker": false
     }
   },
+  "channel_list": {
+    "dingtalk": {
       "enabled": false,
       "type": "dingtalk",
       "reasoning_channel_id": "",
@@ -320,7 +325,6 @@
         "bridge_url": "ws://localhost:3001",
         "use_native": false,
         "session_store_path": ""
->>>>>>> 8f0c6ec6 (feat(channels): add email channel with IMAP/SMTP, log, quota, and connection test)
       }
     }
   },
@@ -350,6 +354,7 @@
     {
       "model_name": "gemini",
       "provider": "",
+      "_comment": "Optional: set \"tool_schema_transform\": \"simple\" for providers that reject complex tool JSON Schema.",
       "model": "antigravity/gemini-2.0-flash",
       "auth_method": "oauth"
     },
@@ -659,5 +664,29 @@
     "git_commit": "0c0a5825",
     "build_time": "2026-04-28T02:35:20+0800",
     "go_version": "go1.26.2"
+  },
+  "hooks": {
+    "enabled": true,
+    "defaults": {
+      "observer_timeout_ms": 500,
+      "interceptor_timeout_ms": 5000,
+      "approval_timeout_ms": 60000
+    }
+  },
+  "events": {
+    "logging": {
+      "enabled": true,
+      "include": ["agent.*"],
+      "exclude": [],
+      "min_severity": "info",
+      "include_payload": false
+    }
+  },
+  "gateway": {
+    "_comment": "Default log level is set to 'fatal'. Other available options are 'debug', 'info', 'warn' and 'error'.",
+    "host": "localhost",
+    "port": 18790,
+    "hot_reload": false,
+    "log_level": "fatal"
   }
 }
