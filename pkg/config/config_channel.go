@@ -29,6 +29,7 @@ const (
 	ChannelQQ             = "qq"
 	ChannelIRC            = "irc"
 	ChannelVK             = "vk"
+	ChannelEmail          = "email"
 	ChannelMaixCam        = "maixcam"
 	ChannelWhatsApp       = "whatsapp"
 	ChannelWhatsAppNative = "whatsapp_native"
@@ -638,6 +639,7 @@ var channelSettingsFactory = map[string]any{
 	ChannelQQ:             (QQSettings{}),
 	ChannelIRC:            (IRCSettings{}),
 	ChannelVK:             (VKSettings{}),
+	ChannelEmail:          (EmailSettings{}),
 	ChannelMaixCam:        (MaixCamSettings{}),
 	ChannelWhatsApp:       (WhatsAppSettings{}),
 	ChannelWhatsAppNative: (WhatsAppSettings{}),
@@ -695,6 +697,9 @@ func InitChannelList(channels ChannelsConfig) error {
 			// Apply env overrides for channel-specific fields via struct tags
 			if err := env.Parse(target); err != nil {
 				// Non-fatal: some env vars may not apply
+			}
+			if settings, ok := target.(*EmailSettings); ok {
+				ApplyEmailSettingsDefaults(settings)
 			}
 		}
 	}

@@ -18,6 +18,8 @@ export const SECRET_FIELD_MAP = {
   password: "_password",
   nickserv_password: "_nickserv_password",
   sasl_password: "_sasl_password",
+  smtp_password: "_smtp_password",
+  imap_password: "_imap_password",
 } as const
 
 const CHANNEL_SECRET_FIELDS: Record<string, string[]> = {
@@ -31,6 +33,7 @@ const CHANNEL_SECRET_FIELDS: Record<string, string[]> = {
   qq: ["app_secret"],
   onebot: ["access_token"],
   wecom: ["secret"],
+  email: ["smtp_password", "imap_password"],
   pico: ["token"],
   matrix: ["access_token"],
   irc: ["password", "nickserv_password", "sasl_password"],

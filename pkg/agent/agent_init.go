@@ -167,7 +167,12 @@ func registerSharedTools(
 			) error {
 				pubCtx, pubCancel := context.WithTimeout(context.Background(), 5*time.Second)
 				defer pubCancel()
-				outboundCtx := bus.NewOutboundContext(channel, chatID, replyToMessageID)
+				outboundCtx := outboundContextFromInbound(
+					tools.ToolInboundContext(ctx),
+					channel,
+					chatID,
+					replyToMessageID,
+				)
 				outboundAgentID, outboundSessionKey, outboundScope := outboundTurnMetadata(
 					tools.ToolAgentID(ctx),
 					tools.ToolSessionKey(ctx),
@@ -179,7 +184,7 @@ func registerSharedTools(
 					SessionKey:       outboundSessionKey,
 					Scope:            outboundScope,
 					Content:          content,
-					ReplyToMessageID: replyToMessageID,
+					ReplyToMessageID: outboundCtx.ReplyToMessageID,
 				})
 			})
 			agent.Tools.Register(messageTool)
